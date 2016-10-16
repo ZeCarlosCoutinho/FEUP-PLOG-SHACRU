@@ -86,8 +86,15 @@ printBoard(T):-
 	displayBoard(T, 1),
 	printDownBorder.
 
-% Game predicates
+% Predicados
 
-% Moves the marker of a player to a different tile
-% moveMarker(Player, Tile).
-%gameEnd(G)
+movePeca(Jogador, Peca, Direcao).
+colocaMarcador(Jogador, Casa).
+giraPeca(Jogador, Peca, Direcao). % 0 - Nao gira, 1 - 45º contra-relogio, 2 - 45º sentido relogio
+podeMoverPeca(Jogador, Peca, Direcao). %- Verifica se uma peca pode ser movida na direcao escolhida
+mudouDeSeccao(Jogador, Peca, Direcao). %- Verifica se uma peca mudou de seccao
+alcancavel(Jogador, Peca, Casa),. %- Verifica se, nesse momento, é possivel determinada peça, com um numero qualquer de jogadaschegar a uma determinada casa
+casaTemPeca(Casa). %
+casaTemMarcadorOposto(Jogador, Casa). %
+contaMarcadores(Jogador, Tabuleiro, Contador). %
+fimDeJogo. %
