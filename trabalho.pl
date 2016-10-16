@@ -2,13 +2,6 @@
 :- include('casinhas.pl').
 
 
-run:-
-	write('\33\[2J'), nl,
-	write('\t\t#############################################'), nl, nl,
-	write('\t\t####               SHACRU                ####'), nl, nl,
-	write('\t\t#############################################'), nl, nl,
-	startingBoard(T), startBoard(T).
-
 printRowSeparator:-
 	write('# --------------------------------------------------- #'), nl.
 
