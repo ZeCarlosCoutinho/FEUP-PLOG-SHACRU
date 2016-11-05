@@ -37,8 +37,8 @@ startingBoard:-[	[[2, 9],[0, 0],[1, 8],[0, 0],[0, 0],[0, 0],[2, 8],[0, 0],[0, 0]
 				[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 				[[0, 0],[0, 0],[1, 2],[0, 0],[0, 0],[0, 0],[2, 2],[0, 0],[1, 1]]
 ].
-printLine(LineNumber, [], Iterator).
-printLine(LineNumber, [Pair], Iterator):-
+printLine(_, [], _).
+printLine(LineNumber, [Pair], _Iterator):-
 	marking(LineNumber, Pair).
 printLine(LineNumber, [Pair|Rest], 3):-
 	marking(LineNumber, Pair),
@@ -55,8 +55,8 @@ printRow(Row):-
 	write('# '), printLine(2, Row, 1), write(' #'), nl, 
 	write('# '), printLine(3, Row, 1), write(' #'), nl.
 
-displayBoard([], Iterator).
-displayBoard([Row], Iterator):-
+displayBoard([], _).
+displayBoard([Row], _Iterator):-
 	printRow(Row).
 displayBoard([Row|Rest], 3):- % Quando se faz o separador de secções
 	printRow(Row),
@@ -87,7 +87,7 @@ printBoard(T):-
 	printDownBorder.
 
 % Predicados
-
+/*
 movePeca(Jogador, Peca, Direcao).
 colocaMarcador(Jogador, Casa).
 giraPeca(Jogador, Peca, Direcao). % 0 - Nao gira, 1 - 45º contra-relogio, 2 - 45º sentido relogio
@@ -98,14 +98,14 @@ casaTemPeca(Casa). %
 casaTemMarcadorOposto(Jogador, Casa). %
 contaMarcadores(Jogador, Tabuleiro, Contador). %
 fimDeJogo. %
-
+*/
 
 getLine(Board, Line, LineNumber):- getLine(Board, Line, LineNumber, 1). % Iterator = 1
-getLine([], ResultLine, LineNumber, Iterator):- %If lineNumber is greater that the board size
+getLine([], _, _, _):- %If lineNumber is greater that the board size
 	write('Line not existent'), nl, fail.
-getLine([Line|Rest], ResultLine, LineNumber, LineNumber):- % When Iterator = LineNumber
+getLine([Line|_Rest], ResultLine, LineNumber, LineNumber):- % When Iterator = LineNumber
 	ResultLine = Line.
-getLine([Line|Rest], ResultLine, LineNumber, Iterator):- % Iterates across the lines of the board
+getLine([_Line|Rest], ResultLine, LineNumber, Iterator):- % Iterates across the lines of the board
 	IteratorPlus is Iterator + 1,
 	getLine(Rest, ResultLine, LineNumber, IteratorPlus).
 
@@ -113,9 +113,9 @@ getLine([Line|Rest], ResultLine, LineNumber, Iterator):- % Iterates across the l
 getLineElement(Line, Tile, ColumnNumber):- getLineElement(Line, Tile, ColumnNumber, 1).
 getLineElement([], _, _, _):-
 	write('Column not existent'), nl, fail.
-getLineElement([Element|Rest], Tile, ColumnNumber, ColumnNumber):-
+getLineElement([Element|_Rest], Tile, ColumnNumber, ColumnNumber):-
 	Tile = Element.
-getLineElement([Element|Rest], Tile, ColumnNumber, Iterator):-
+getLineElement([_Element|Rest], Tile, ColumnNumber, Iterator):-
 	IteratorPlus is Iterator + 1,
 	getLineElement(Rest, Tile, ColumnNumber, IteratorPlus).
 
@@ -148,6 +148,6 @@ showTile(LineNumber, ColumnNumber):-
 		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
 		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
 		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
-	getTile(T, Tile, LineNumber, ColumnNumber).
+	getTile(T, _Tile, LineNumber, ColumnNumber).
 	
-jogadasValidas(Tabuleiro, Jogador, Peca, []).
+% jogadasValidas(Tabuleiro, Jogador, Peca, []).
