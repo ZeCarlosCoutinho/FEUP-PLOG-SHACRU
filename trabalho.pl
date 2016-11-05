@@ -99,17 +99,32 @@ casaTemMarcadorOposto(Jogador, Casa). %
 contaMarcadores(Jogador, Tabuleiro, Contador). %
 fimDeJogo. %
 
+
 getLine(Board, Line, LineNumber):- getLine(Board, Line, LineNumber, 1). % Iterator = 1
+getLine([], ResultLine, LineNumber, Iterator):- %If lineNumber is greater that the board size
+	write('Line not existent'), nl, fail.
 getLine([Line|Rest], ResultLine, LineNumber, LineNumber):- % When Iterator = LineNumber
-	write('Iterator = LineNumber'), nl,
 	ResultLine = Line.
 getLine([Line|Rest], ResultLine, LineNumber, Iterator):- % Iterates across the lines of the board
-	write('Start'), nl, 
 	IteratorPlus is Iterator + 1,
-	write('Iterator + 1'), nl,
 	getLine(Rest, ResultLine, LineNumber, IteratorPlus).
-	
-% getTile(Board, Tile):-
+
+
+getLineElement(Line, Tile, ColumnNumber):- getLineElement(Line, Tile, ColumnNumber, 1).
+getLineElement([], _, _, _):-
+	write('Column not existent'), nl, fail.
+getLineElement([Element|Rest], Tile, ColumnNumber, ColumnNumber):-
+	Tile = Element.
+getLineElement([Element|Rest], Tile, ColumnNumber, Iterator):-
+	IteratorPlus is Iterator + 1,
+	getLineElement(Rest, Tile, ColumnNumber, IteratorPlus).
+
+
+getTile(Board, Tile, LineNumber, ColumnNumber):-
+	getLine(Board, Line, LineNumber), !, % - Avoids redoing getLine
+	getLineElement(Line, Tile, ColumnNumber),
+	write(Tile).
+
 showLine(LineNumber):-
 	T=	[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
 		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
@@ -122,6 +137,17 @@ showLine(LineNumber):-
 		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
 	getLine(T, Line, LineNumber),
 	write(Line).
-	
+
+showTile(LineNumber, ColumnNumber):-
+	T=	[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
+		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
+		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
+		[[0, 0],[2, 0],[1, 0],[0, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
+		[[1, 0],[1, 0],[2, 0],[1, 9],[2, 0],[1, 0],[2, 0],[1, 0],[2, 0]],
+		[[2, 4],[2, 0],[1, 0],[2, 0],[2, 0],[1, 0],[1, 0],[2, 0],[2, 6]],
+		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
+		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
+		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
+	getTile(T, Tile, LineNumber, ColumnNumber).
 	
 jogadasValidas(Tabuleiro, Jogador, Peca, []).
