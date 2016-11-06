@@ -125,6 +125,7 @@ getTile(Board, Tile, LineNumber, ColumnNumber):-
 	getLineElement(Line, Tile, ColumnNumber),
 	write(Tile).
 
+% Funcoes de teste!! -----------------------
 showLine(LineNumber):-
 	T=	[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
 		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
@@ -149,5 +150,81 @@ showTile(LineNumber, ColumnNumber):-
 		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
 		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
 	getTile(T, _Tile, LineNumber, ColumnNumber).
+
+showValid(Player, [LineNumber, ColumnNumber], Direction):-
+	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
+	validMove(T, Player, [LineNumber, ColumnNumber], Direction).
+% -----------------------------------------------
+directionToCoordinates(1, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line - 1,
+	ResultColumn is Column - 1.
+directionToCoordinates(2, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line - 1,
+	ResultColumn is Column.
+directionToCoordinates(3, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line - 1,
+	ResultColumn is Column + 1.
+directionToCoordinates(4, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line,
+	ResultColumn is Column - 1.
+directionToCoordinates(0, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line,
+	ResultColumn is Column.
+directionToCoordinates(5, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line,
+	ResultColumn is Column.
+directionToCoordinates(6, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line,
+	ResultColumn is Column + 1.
+directionToCoordinates(7, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line + 1,
+	ResultColumn is Column - 1.
+directionToCoordinates(8, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line + 1,
+	ResultColumn is Column.
+directionToCoordinates(9, [Line, Column], [ResultLine, ResultColumn]):-
+	ResultLine is Line + 1,
+	ResultColumn is Column + 1.
 	
+
+validMove(Board, Player, [_TileLine, _TileColumn], Direction):- %Checks if moving a player's piece in the Direction is a valid move.
+	directionToCoordinates(Direction, [_TileLine, _TileColumn], [NextLine, NextColumn]),
+	NextLine > 0, NextColumn > 0,
+	NextLine < 10, NextColumn < 10,
+	getTile(Board, [NextTilePlayer, NextTileDirection], NextLine, NextColumn), % Gets the next tile acording to the direction given
+	!, (NextTilePlayer =:= Player ; NextTilePlayer =:= 0), % The next tile must be the from the players color, or no color
+	NextTileDirection =:= 0. % The next tile must not have any piece there
 % jogadasValidas(Tabuleiro, Jogador, Peca, []).
+
+/*
+So para se for necessario guardar:
+Tabuleiro Final=	
+		[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
+		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
+		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
+		[[0, 0],[2, 0],[1, 0],[0, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
+		[[1, 0],[1, 0],[2, 0],[1, 9],[2, 0],[1, 0],[2, 0],[1, 0],[2, 0]],
+		[[2, 4],[2, 0],[1, 0],[2, 0],[2, 0],[1, 0],[1, 0],[2, 0],[2, 6]],
+		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
+		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
+		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]]
+		
+Tabuleiro Vazio=
+		[[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]]
+		*/
