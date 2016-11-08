@@ -1,5 +1,6 @@
 
 :- include('casinhas.pl').
+:- include('teste.pl').
 
 
 printRowSeparator:-
@@ -99,7 +100,8 @@ casaTemMarcadorOposto(Jogador, Casa). %
 contaMarcadores(Jogador, Tabuleiro, Contador). %
 fimDeJogo. %
 */
-
+%----------------------------------------------------------
+%----------------------------------------------------------
 getLine(Board, Line, LineNumber):- getLine(Board, Line, LineNumber, 1). % Iterator = 1
 getLine([], _, _, _):- %If lineNumber is greater that the board size
 	write('Line not existent'), nl, fail.
@@ -108,7 +110,8 @@ getLine([Line|_Rest], ResultLine, LineNumber, LineNumber):- % When Iterator = Li
 getLine([_Line|Rest], ResultLine, LineNumber, Iterator):- % Iterates across the lines of the board
 	IteratorPlus is Iterator + 1,
 	getLine(Rest, ResultLine, LineNumber, IteratorPlus).
-
+%----------------------------------------------------------
+%----------------------------------------------------------
 
 getLineElement(Line, Tile, ColumnNumber):- getLineElement(Line, Tile, ColumnNumber, 1).
 getLineElement([], _, _, _):-
@@ -119,49 +122,13 @@ getLineElement([_Element|Rest], Tile, ColumnNumber, Iterator):-
 	IteratorPlus is Iterator + 1,
 	getLineElement(Rest, Tile, ColumnNumber, IteratorPlus).
 
-
+%----------------------------------------------------------
+%----------------------------------------------------------
 getTile(Board, Tile, LineNumber, ColumnNumber):-
 	getLine(Board, Line, LineNumber), !, % - Avoids redoing getLine
 	getLineElement(Line, Tile, ColumnNumber),
-	write(Tile).
-
-% Funcoes de teste!! -----------------------
-showLine(LineNumber):-
-	T=	[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
-		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[0, 0],[2, 0],[1, 0],[0, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[1, 0],[1, 0],[2, 0],[1, 9],[2, 0],[1, 0],[2, 0],[1, 0],[2, 0]],
-		[[2, 4],[2, 0],[1, 0],[2, 0],[2, 0],[1, 0],[1, 0],[2, 0],[2, 6]],
-		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
-		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
-		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
-	getLine(T, Line, LineNumber),
-	write(Line).
-
-showTile(LineNumber, ColumnNumber):-
-	T=	[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
-		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[0, 0],[2, 0],[1, 0],[0, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[1, 0],[1, 0],[2, 0],[1, 9],[2, 0],[1, 0],[2, 0],[1, 0],[2, 0]],
-		[[2, 4],[2, 0],[1, 0],[2, 0],[2, 0],[1, 0],[1, 0],[2, 0],[2, 6]],
-		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
-		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
-		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
-	getTile(T, _Tile, LineNumber, ColumnNumber).
-
-showValid(Player, [LineNumber, ColumnNumber], Direction):-
-	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	validMove(T, Player, [LineNumber, ColumnNumber], Direction).
+	write(Tile), nl.
+% -----------------------------------------------
 % -----------------------------------------------
 directionToCoordinates(1, [Line, Column], [ResultLine, ResultColumn]):-
 	ResultLine is Line - 1,
@@ -193,7 +160,8 @@ directionToCoordinates(8, [Line, Column], [ResultLine, ResultColumn]):-
 directionToCoordinates(9, [Line, Column], [ResultLine, ResultColumn]):-
 	ResultLine is Line + 1,
 	ResultColumn is Column + 1.
-	
+% -----------------------------------------------
+% -----------------------------------------------	
 
 validMove(Board, Player, [_TileLine, _TileColumn], Direction):- %Checks if moving a player's piece in the Direction is a valid move.
 	directionToCoordinates(Direction, [_TileLine, _TileColumn], [NextLine, NextColumn]),
@@ -204,6 +172,39 @@ validMove(Board, Player, [_TileLine, _TileColumn], Direction):- %Checks if movin
 	NextTileDirection =:= 0. % The next tile must not have any piece there
 % jogadasValidas(Tabuleiro, Jogador, Peca, []).
 
+/*ESTA ERRADO*/
+getValidMoves(Board, Player, [TileLine, TileColumn], Result):- getValidMoves(Board, Player, [TileLine, TileColumn], [], [1,2,3,4,5,6,7,8,9], Result).
+getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, [], Result):-
+	Result = DirectionsList.
+getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, [ActualIterator | Rest], Result):- % Iterator is the directions
+	(validMove(Board, Player, [TileLine, TileColumn], ActualIterator), 
+	append(DirectionsList, [ActualIterator], NextDirectionsList));
+	getValidMoves(Board, Player, [TileLine, TileColumn], NextDirectionsList, Rest, Result).
+	
+
+changeLine(Board, LineNumber, NewLine, Result):- changeLine(Board, [], LineNumber, NewLine, 1, Result).
+changeLine(RemainderOfBoard, NewBoard, LineNumber, _, Iterator, Result):-
+	Iterator > LineNumber,
+	LineNumber < 10,
+	append(NewBoard, RemainderOfBoard, Result).
+changeLine([Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
+	Iterator < LineNumber,
+	LineNumber > 0,
+	IteratorPlus is Iterator + 1,
+	append(NewBoard, [Line], NewBoardPlus),
+	changeLine(Rest, NewBoardPlus, LineNumber, NewLine, IteratorPlus, Result).
+changeLine([Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
+	LineNumber =:= Iterator,
+	IteratorPlus is Iterator + 1,
+	append(NewBoard, [NewLine], NewBoardPlus), %Adds line to the NewBoard
+	changeLine(Rest, NewBoardPlus, LineNumber, NewLine, IteratorPlus, Result).
+
+changeTile(Board, [X, Y], NewTile):-
+	getLine(Board, Line, X).
+
+changeTile(Board, NewBoard, [X, Y], NewTile).
+	
+	
 /*
 So para se for necessario guardar:
 Tabuleiro Final=	
