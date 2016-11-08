@@ -181,8 +181,13 @@ getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, [ActualIter
 	append(DirectionsList, [ActualIterator], NextDirectionsList));
 	getValidMoves(Board, Player, [TileLine, TileColumn], NextDirectionsList, Rest, Result).
 	
-
-changeLine(Board, LineNumber, NewLine, Result):- changeLine(Board, [], LineNumber, NewLine, 1, Result).
+% -----------------------------------------------
+% -----------------------------------------------
+changeLine(Board, LineNumber, NewLine, Result):- 
+	length(NewLine, 9),
+	LineNumber < 10,
+	LineNumber > 0,
+	changeLine(Board, [], LineNumber, NewLine, 1, Result).
 changeLine(RemainderOfBoard, NewBoard, LineNumber, _, Iterator, Result):-
 	Iterator > LineNumber,
 	LineNumber < 10,
