@@ -183,7 +183,7 @@ getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, [ActualIter
 	
 % -----------------------------------------------
 % -----------------------------------------------
-changeLine(Board, LineNumber, NewLine, Result):- 
+changeLine(Board, NewLine, LineNumber, Result):- 
 	length(NewLine, 9),
 	LineNumber < 10,
 	LineNumber > 0,
@@ -204,7 +204,7 @@ changeLine([Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
 	append(NewBoard, [NewLine], NewBoardPlus), %Adds line to the NewBoard
 	changeLine(Rest, NewBoardPlus, LineNumber, NewLine, IteratorPlus, Result).
 
-
+	
 changeElement(Line, NewElement, ColumnNumber, Result):-
 	length(NewElement, 2),
 	ColumnNumber > 0,
@@ -221,6 +221,12 @@ changeElement([Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Re
 	changeElement(Rest, TempLinePlus, NewElement, ColumnNumber, IteratorPlus, Result).
 	
 	
+changeTile(Board, [X, Y], NewTile, ResultBoard):-
+	getLine(Board, TargetLine, X), % Gets line to change
+	changeElement(TargetLine, NewTile, Y, ResultLine), %Changes the line
+	changeLine(Board, ResultLine, X, ResultBoard). %Changes the board
+% -----------------------------------------------
+% -----------------------------------------------
 /*
 So para se for necessario guardar:
 Tabuleiro Final=	
