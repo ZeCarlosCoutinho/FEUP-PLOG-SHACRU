@@ -204,10 +204,21 @@ changeLine([Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
 	append(NewBoard, [NewLine], NewBoardPlus), %Adds line to the NewBoard
 	changeLine(Rest, NewBoardPlus, LineNumber, NewLine, IteratorPlus, Result).
 
-changeTile(Board, [X, Y], NewTile):-
-	getLine(Board, Line, X).
 
-changeTile(Board, NewBoard, [X, Y], NewTile).
+changeElement(Line, NewElement, ColumnNumber, Result):-
+	length(NewElement, 2),
+	ColumnNumber > 0,
+	ColumnNumber < 10,
+	changeElement(Line, TempLine, NewElement, ColumnNumber, 1, Result).
+changeElement([Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Result):-
+	Iterator =:= ColumnNumber,
+	append(TempLine, [NewElement], TempLinePlus),
+	append(TempLinePlus, Rest, Result).
+changeElement([Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Result):-
+	Iterator < ColumnNumber,
+	IteratorPlus is Iterator + 1,
+	append(TempLine, [Element], TempLinePlus),
+	changeElement(Rest, TempLinePlus, NewElement, ColumnNumber, IteratorPlus, Result).
 	
 	
 /*

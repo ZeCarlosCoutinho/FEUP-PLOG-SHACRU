@@ -60,3 +60,8 @@ showChangeLine(NewLine, NewLineIndex):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
 	changeLine(T, NewLineIndex, NewLine, NewT),
 	printBoard(NewT).
+	
+showChangeElement(NewElement, NewElementIndex):-
+	L = [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+	changeElement(L, NewElement, NewElementIndex, NewL),
+	write(NewL).
