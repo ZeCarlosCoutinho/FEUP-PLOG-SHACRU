@@ -131,10 +131,19 @@ getTile(Board, Tile, LineNumber, ColumnNumber):-
 getPlayer(Board, [Line, Column], Player):-
 	getTile(Board, [TilePlayer, _TileDirection], Line, Column),
 	Player = TilePlayer.
+
+setPlayer(Board, [Line, Column], Player, NewBoard):-
+	getTile(Board, [_TilePlayer, TileDirection], Line, Column),
+	changeTile(Board, [Line, Column], [Player, TileDirection], NewBoard).
 	
 getDirection(Board, [Line, Column], Direction):-
 	getTile(Board, [_TilePlayer, TileDirection], Line, Column),
 	Direction = TileDirection.
+	
+setDirection(Board, [Line, Column], Direction, NewBoard):-
+	Direction > 0, Direction < 10,
+	getTile(Board, [TilePlayer, _TileDirection], Line, Column),
+	changeTile(Board, [Line, Column], [TilePlayer, Direction], NewBoard).
 % -----------------------------------------------
 % -----------------------------------------------
 directionToCoordinates(1, [Line, Column], [ResultLine, ResultColumn]):-
@@ -245,6 +254,9 @@ changeTile(Board, [X, Y], NewTile, ResultBoard):-
 % -----------------------------------------------
 % -----------------------------------------------
 
+movePiece(Board, [TileLine, TileColumn], Direction, NewBoard):-
+	getTile(Board, Tile, TileLine, TileColumn).
+	
 /*
 So para se for necessario guardar:
 Tabuleiro Final=	
