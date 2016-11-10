@@ -110,8 +110,7 @@ getLine([Line|_Rest], ResultLine, LineNumber, LineNumber):- % When Iterator = Li
 getLine([_Line|Rest], ResultLine, LineNumber, Iterator):- % Iterates across the lines of the board
 	IteratorPlus is Iterator + 1,
 	getLine(Rest, ResultLine, LineNumber, IteratorPlus).
-%----------------------------------------------------------
-%----------------------------------------------------------
+
 
 getLineElement(Line, Tile, ColumnNumber):- getLineElement(Line, Tile, ColumnNumber, 1).
 getLineElement([], _, _, _):-
@@ -122,12 +121,20 @@ getLineElement([_Element|Rest], Tile, ColumnNumber, Iterator):-
 	IteratorPlus is Iterator + 1,
 	getLineElement(Rest, Tile, ColumnNumber, IteratorPlus).
 
-%----------------------------------------------------------
-%----------------------------------------------------------
+	
 getTile(Board, Tile, LineNumber, ColumnNumber):-
 	getLine(Board, Line, LineNumber), !, % - Avoids redoing getLine
 	getLineElement(Line, Tile, ColumnNumber),
 	write(Tile), nl.
+	
+
+getPlayer(Board, [Line, Column], Player):-
+	getTile(Board, [TilePlayer, _TileDirection], Line, Column),
+	Player = TilePlayer.
+	
+getDirection(Board, [Line, Column], Direction):-
+	getTile(Board, [_TilePlayer, TileDirection], Line, Column),
+	Direction = TileDirection.
 % -----------------------------------------------
 % -----------------------------------------------
 directionToCoordinates(1, [Line, Column], [ResultLine, ResultColumn]):-
@@ -237,6 +244,7 @@ changeTile(Board, [X, Y], NewTile, ResultBoard):-
 	changeLine(Board, ResultLine, X, ResultBoard). %Changes the board
 % -----------------------------------------------
 % -----------------------------------------------
+
 /*
 So para se for necessario guardar:
 Tabuleiro Final=	
