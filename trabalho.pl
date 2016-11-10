@@ -172,14 +172,24 @@ validMove(Board, Player, [_TileLine, _TileColumn], Direction):- %Checks if movin
 	NextTileDirection =:= 0. % The next tile must not have any piece there
 % jogadasValidas(Tabuleiro, Jogador, Peca, []).
 
-/*ESTA ERRADO*/
-getValidMoves(Board, Player, [TileLine, TileColumn], Result):- getValidMoves(Board, Player, [TileLine, TileColumn], [], [1,2,3,4,5,6,7,8,9], Result).
-getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, [], Result):-
+
+getValidMoves(Board, Player, [TileLine, TileColumn], Result):- 
+	TileLine > 0, TileColumn > 0,
+	TileLine < 10, TileColumn < 10,
+	getValidMoves(Board, Player, [TileLine, TileColumn], [], 1, Result).
+getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, 10, Result):-
 	Result = DirectionsList.
-getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, [ActualIterator | Rest], Result):- % Iterator is the directions
-	(validMove(Board, Player, [TileLine, TileColumn], ActualIterator), 
-	append(DirectionsList, [ActualIterator], NextDirectionsList));
-	getValidMoves(Board, Player, [TileLine, TileColumn], NextDirectionsList, Rest, Result).
+	
+getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, Iterator, Result):- % Iterator is the directions
+	IteratorPlus is Iterator + 1,
+	\+validMove(Board, Player, [TileLine, TileColumn], Iterator),
+	getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, IteratorPlus, Result).
+	
+getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, Iterator, Result):- % Iterator is the directions
+	IteratorPlus is Iterator + 1,
+	validMove(Board, Player, [TileLine, TileColumn], Iterator),
+	append(DirectionsList, [Iterator], NewDirectionsList),
+	getValidMoves(Board, Player, [TileLine, TileColumn], NewDirectionsList, IteratorPlus, Result).
 	
 % -----------------------------------------------
 % -----------------------------------------------
