@@ -177,7 +177,7 @@ getValidMoves(Board, Player, [TileLine, TileColumn], Result):-
 	TileLine > 0, TileColumn > 0,
 	TileLine < 10, TileColumn < 10,
 	getValidMoves(Board, Player, [TileLine, TileColumn], [], 1, Result).
-getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, 10, Result):-
+getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, 10, Result):- %Ending condition (Iterator == 10)
 	Result = DirectionsList.
 	
 getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, Iterator, Result):- % Iterator is the directions
