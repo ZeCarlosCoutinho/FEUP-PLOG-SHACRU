@@ -141,7 +141,7 @@ getDirection(Board, [Line, Column], Direction):-
 	Direction = TileDirection.
 	
 setDirection(Board, [Line, Column], Direction, NewBoard):-
-	Direction > 0, Direction < 10,
+	Direction > -1, Direction < 10,
 	getTile(Board, [TilePlayer, _TileDirection], Line, Column),
 	changeTile(Board, [Line, Column], [TilePlayer, Direction], NewBoard).
 % -----------------------------------------------
@@ -193,7 +193,7 @@ getValidMoves(Board, Player, [TileLine, TileColumn], Result):-
 	TileLine > 0, TileColumn > 0,
 	TileLine < 10, TileColumn < 10,
 	getValidMoves(Board, Player, [TileLine, TileColumn], [], 1, Result).
-getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, 10, Result):- %Ending condition (Iterator == 10)
+getValidMoves(_Board, _Player, [_TileLine, _TileColumn], DirectionsList, 10, Result):- %Ending condition (Iterator == 10)
 	Result = DirectionsList.
 	
 getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, Iterator, Result):- % Iterator is the directions
@@ -224,7 +224,7 @@ changeLine([Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
 	IteratorPlus is Iterator + 1,
 	append(NewBoard, [Line], NewBoardPlus),
 	changeLine(Rest, NewBoardPlus, LineNumber, NewLine, IteratorPlus, Result).
-changeLine([Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
+changeLine([_Line | Rest], NewBoard, LineNumber, NewLine, Iterator, Result):-
 	LineNumber =:= Iterator,
 	IteratorPlus is Iterator + 1,
 	append(NewBoard, [NewLine], NewBoardPlus), %Adds line to the NewBoard
@@ -235,8 +235,8 @@ changeElement(Line, NewElement, ColumnNumber, Result):-
 	length(NewElement, 2),
 	ColumnNumber > 0,
 	ColumnNumber < 10,
-	changeElement(Line, TempLine, NewElement, ColumnNumber, 1, Result).
-changeElement([Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Result):-
+	changeElement(Line, [], NewElement, ColumnNumber, 1, Result).
+changeElement([_Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Result):-
 	Iterator =:= ColumnNumber,
 	append(TempLine, [NewElement], TempLinePlus),
 	append(TempLinePlus, Rest, Result).
@@ -247,16 +247,23 @@ changeElement([Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Re
 	changeElement(Rest, TempLinePlus, NewElement, ColumnNumber, IteratorPlus, Result).
 	
 	
-changeTile(Board, [X, Y], NewTile, ResultBoard):-
+changeTile(Board, [X, Y], [TilePlayer, TileDirection], ResultBoard):-
+	TileDirection > -1, TileDirection < 10,
 	getLine(Board, TargetLine, X), % Gets line to change
-	changeElement(TargetLine, NewTile, Y, ResultLine), %Changes the line
+	changeElement(TargetLine, [TilePlayer, TileDirection], Y, ResultLine), %Changes the line
 	changeLine(Board, ResultLine, X, ResultBoard). %Changes the board
 % -----------------------------------------------
 % -----------------------------------------------
 
+% This DOESN'T ask for the final direction change of the piece!!!
+% That must be done later, after input from the player/AI
 movePiece(Board, [TileLine, TileColumn], Direction, NewBoard):-
-	getTile(Board, Tile, TileLine, TileColumn).
-	
+	getTile(Board, [TilePlayer, TileDirection], TileLine, TileColumn),!, %get old Tile
+	TilePlayer \= 0, !,						%if it is 0, then there is no piece
+	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
+	directionToCoordinates(Direction, [TileLine, TileColumn], [NewTileLine, NewTileColumn]), %Get the new Tile
+	changeTile(Board, [NewTileLine, NewTileColumn], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
+	setDirection(TempBoard, [TileLine, TileColumn], 0, NewBoard). %Erase the old piece from the previous tile
 /*
 So para se for necessario guardar:
 Tabuleiro Final=	
