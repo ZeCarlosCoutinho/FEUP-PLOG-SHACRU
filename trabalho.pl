@@ -122,90 +122,91 @@ getLineElement([_Element|Rest], Tile, ColumnNumber, Iterator):-
 	getLineElement(Rest, Tile, ColumnNumber, IteratorPlus).
 
 	
-getTile(Board, Tile, LineNumber, ColumnNumber):-
-	getLine(Board, Line, LineNumber), !, % - Avoids redoing getLine
-	getLineElement(Line, Tile, ColumnNumber),
+getTile(Board, Tile, [X, Y]):-
+	getLine(Board, Line, Y), !, % - Avoids redoing getLine
+	getLineElement(Line, Tile, X),
 	write(Tile), nl.
 	
 
-getPlayer(Board, [Line, Column], Player):-
-	getTile(Board, [TilePlayer, _TileDirection], Line, Column),
+getPlayer(Board, [X, Y], Player):-
+	getTile(Board, [TilePlayer, _TileDirection], [X, Y]),
 	Player = TilePlayer.
 
-setPlayer(Board, [Line, Column], Player, NewBoard):-
-	getTile(Board, [_TilePlayer, TileDirection], Line, Column),
-	changeTile(Board, [Line, Column], [Player, TileDirection], NewBoard).
+setPlayer(Board, [X, Y], Player, NewBoard):-
+	getTile(Board, [_TilePlayer, TileDirection], [X, Y]),
+	changeTile(Board, [X, Y], [Player, TileDirection], NewBoard).
 	
-getDirection(Board, [Line, Column], Direction):-
-	getTile(Board, [_TilePlayer, TileDirection], Line, Column),
+getDirection(Board, [X, Y], Direction):-
+	getTile(Board, [_TilePlayer, TileDirection], [X, Y]),
 	Direction = TileDirection.
 	
-setDirection(Board, [Line, Column], Direction, NewBoard):-
+setDirection(Board, [X, Y], Direction, NewBoard):-
 	Direction > -1, Direction < 10,
-	getTile(Board, [TilePlayer, _TileDirection], Line, Column),
-	changeTile(Board, [Line, Column], [TilePlayer, Direction], NewBoard).
+	getTile(Board, [TilePlayer, _TileDirection], [X, Y]),
+	changeTile(Board, [X, Y], [TilePlayer, Direction], NewBoard).
 % -----------------------------------------------
 % -----------------------------------------------
-directionToCoordinates(1, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line - 1,
-	ResultColumn is Column - 1.
-directionToCoordinates(2, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line - 1,
-	ResultColumn is Column.
-directionToCoordinates(3, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line - 1,
-	ResultColumn is Column + 1.
-directionToCoordinates(4, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line,
-	ResultColumn is Column - 1.
-directionToCoordinates(0, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line,
-	ResultColumn is Column.
-directionToCoordinates(5, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line,
-	ResultColumn is Column.
-directionToCoordinates(6, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line,
-	ResultColumn is Column + 1.
-directionToCoordinates(7, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line + 1,
-	ResultColumn is Column - 1.
-directionToCoordinates(8, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line + 1,
-	ResultColumn is Column.
-directionToCoordinates(9, [Line, Column], [ResultLine, ResultColumn]):-
-	ResultLine is Line + 1,
-	ResultColumn is Column + 1.
+directionToCoordinates(1, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y - 1,
+	ResultX is X - 1.
+directionToCoordinates(2, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y - 1,
+	ResultX is X.
+directionToCoordinates(3, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y - 1,
+	ResultX is X + 1.
+directionToCoordinates(4, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y,
+	ResultX is X - 1.
+directionToCoordinates(0, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y,
+	ResultX is X.
+directionToCoordinates(5, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y,
+	ResultX is X.
+directionToCoordinates(6, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y,
+	ResultX is X + 1.
+directionToCoordinates(7, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y + 1,
+	ResultX is X - 1.
+directionToCoordinates(8, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y + 1,
+	ResultX is X.
+directionToCoordinates(9, [X, Y], [ResultX, ResultY]):-
+	ResultY is Y + 1,
+	ResultX is X + 1.
 % -----------------------------------------------
 % -----------------------------------------------	
 
-validMove(Board, Player, [_TileLine, _TileColumn], Direction):- %Checks if moving a player's piece in the Direction is a valid move.
-	directionToCoordinates(Direction, [_TileLine, _TileColumn], [NextLine, NextColumn]),
-	NextLine > 0, NextColumn > 0,
-	NextLine < 10, NextColumn < 10,
-	getTile(Board, [NextTilePlayer, NextTileDirection], NextLine, NextColumn), % Gets the next tile acording to the direction given
+validMove(Board, Player, [_X, _Y], Direction):- %Checks if moving a player's piece in the Direction is a valid move.
+	%TODO getTile to get the Player color automatically???
+	directionToCoordinates(Direction, [_X, _Y], [NextX, NextY]),
+	NextX > 0, NextY > 0,
+	NextX < 10, NextY < 10,
+	getTile(Board, [NextTilePlayer, NextTileDirection], [NextX, NextY]), % Gets the next tile acording to the direction given
 	!, (NextTilePlayer =:= Player ; NextTilePlayer =:= 0), % The next tile must be the from the players color, or no color
 	NextTileDirection =:= 0. % The next tile must not have any piece there
 % jogadasValidas(Tabuleiro, Jogador, Peca, []).
 
 
-getValidMoves(Board, Player, [TileLine, TileColumn], Result):- 
-	TileLine > 0, TileColumn > 0,
-	TileLine < 10, TileColumn < 10,
-	getValidMoves(Board, Player, [TileLine, TileColumn], [], 1, Result).
-getValidMoves(_Board, _Player, [_TileLine, _TileColumn], DirectionsList, 10, Result):- %Ending condition (Iterator == 10)
+getValidMoves(Board, Player, [X, Y], Result):- 
+	Y > 0, X > 0,
+	Y < 10, X < 10,
+	getValidMoves(Board, Player, [X, Y], [], 1, Result).
+getValidMoves(_Board, _Player, [_X, _Y], DirectionsList, 10, Result):- %Ending condition (Iterator == 10)
 	Result = DirectionsList.
 	
-getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, Iterator, Result):- % Iterator is the directions
+getValidMoves(Board, Player, [X, Y], DirectionsList, Iterator, Result):- % Iterator is the directions
 	IteratorPlus is Iterator + 1,
-	\+validMove(Board, Player, [TileLine, TileColumn], Iterator),
-	getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, IteratorPlus, Result).
+	\+validMove(Board, Player, [X, Y], Iterator),
+	getValidMoves(Board, Player, [X, Y], DirectionsList, IteratorPlus, Result).
 	
-getValidMoves(Board, Player, [TileLine, TileColumn], DirectionsList, Iterator, Result):- % Iterator is the directions
+getValidMoves(Board, Player, [X, Y], DirectionsList, Iterator, Result):- % Iterator is the directions
 	IteratorPlus is Iterator + 1,
-	validMove(Board, Player, [TileLine, TileColumn], Iterator),
+	validMove(Board, Player, [X, Y], Iterator),
 	append(DirectionsList, [Iterator], NewDirectionsList),
-	getValidMoves(Board, Player, [TileLine, TileColumn], NewDirectionsList, IteratorPlus, Result).
+	getValidMoves(Board, Player, [X, Y], NewDirectionsList, IteratorPlus, Result).
 	
 % -----------------------------------------------
 % -----------------------------------------------
@@ -249,21 +250,21 @@ changeElement([Element | Rest], TempLine, NewElement, ColumnNumber, Iterator, Re
 	
 changeTile(Board, [X, Y], [TilePlayer, TileDirection], ResultBoard):-
 	TileDirection > -1, TileDirection < 10,
-	getLine(Board, TargetLine, X), % Gets line to change
-	changeElement(TargetLine, [TilePlayer, TileDirection], Y, ResultLine), %Changes the line
-	changeLine(Board, ResultLine, X, ResultBoard). %Changes the board
+	getLine(Board, TargetLine, Y), % Gets line to change
+	changeElement(TargetLine, [TilePlayer, TileDirection], X, ResultLine), %Changes the line
+	changeLine(Board, ResultLine, Y, ResultBoard). %Changes the board
 % -----------------------------------------------
 % -----------------------------------------------
 
 % This DOESN'T ask for the final direction change of the piece!!!
 % That must be done later, after input from the player/AI
-movePiece(Board, [TileLine, TileColumn], Direction, NewBoard):-
-	getTile(Board, [TilePlayer, TileDirection], TileLine, TileColumn),!, %get old Tile
+movePiece(Board, [X, Y], Direction, NewBoard):-
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
 	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
-	directionToCoordinates(Direction, [TileLine, TileColumn], [NewTileLine, NewTileColumn]), %Get the new Tile
-	changeTile(Board, [NewTileLine, NewTileColumn], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
-	setDirection(TempBoard, [TileLine, TileColumn], 0, NewBoard). %Erase the old piece from the previous tile
+	directionToCoordinates(Direction, [X, Y], [NewX, NewY]), %Get the new Tile
+	changeTile(Board, [NewX, NewY], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
+	setDirection(TempBoard, [X, Y], 0, NewBoard). %Erase the old piece from the previous tile
 /*
 So para se for necessario guardar:
 Tabuleiro Final=	

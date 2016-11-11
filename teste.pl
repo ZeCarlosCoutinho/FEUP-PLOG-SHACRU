@@ -11,7 +11,7 @@ showLine(LineNumber):-
 	getLine(T, Line, LineNumber),
 	write(Line).
 
-showTile(LineNumber, ColumnNumber):-
+showTile(X, Y):-
 	T=	[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
 		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
 		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
@@ -21,9 +21,9 @@ showTile(LineNumber, ColumnNumber):-
 		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
 		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
 		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]],
-	getTile(T, _Tile, LineNumber, ColumnNumber).
+	getTile(T, _Tile, [X, Y]).
 
-showValid(Player, [LineNumber, ColumnNumber], Direction):-
+showValid(Player, [X, Y], Direction):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -33,9 +33,9 @@ showValid(Player, [LineNumber, ColumnNumber], Direction):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	validMove(T, Player, [LineNumber, ColumnNumber], Direction).
+	validMove(T, Player, [X, Y], Direction).
 	
-showValidMoves(Player, [LineNumber, ColumnNumber]):-
+showValidMoves(Player, [X, Y]):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -45,7 +45,7 @@ showValidMoves(Player, [LineNumber, ColumnNumber]):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	getValidMoves(T, Player, [LineNumber, ColumnNumber], Result),
+	getValidMoves(T, Player, [X, Y], Result),
 	write(Result).
 	
 showChangeLine(NewLine, NewLineIndex):-
@@ -58,7 +58,7 @@ showChangeLine(NewLine, NewLineIndex):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	changeLine(T, NewLineIndex, NewLine, NewT),
+	changeLine(T, NewLine, NewLineIndex, NewT),
 	printBoard(NewT).
 	
 showChangeElement(NewElement, NewElementIndex):-
@@ -79,7 +79,7 @@ showChangeTile(NewTile, [X, Y]):-
 	changeTile(T, [X, Y], NewTile, NewT),
 	printBoard(NewT).
 
-showGetPlayer(Tile):-
+showGetPlayer([X, Y]):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -89,10 +89,10 @@ showGetPlayer(Tile):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	getPlayer(T, Tile, Player),
+	getPlayer(T, [X, Y], Player),
 	write(Player).
 	
-showGetDirection(Tile):-
+showGetDirection([X, Y]):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -102,10 +102,10 @@ showGetDirection(Tile):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	getDirection(T, Tile, Direction),
+	getDirection(T, [X, Y], Direction),
 	write(Direction).
 	
-showSetDirection(X, Y, Direction):-
+showSetDirection([X, Y], Direction):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -118,7 +118,7 @@ showSetDirection(X, Y, Direction):-
 	setDirection(T, [X, Y], Direction, NewT),
 	write(NewT).
 	
-showSetPlayer(X, Y, Player):-
+showSetPlayer([X, Y], Player):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -131,7 +131,7 @@ showSetPlayer(X, Y, Player):-
 	setPlayer(T, [X, Y], Player, NewT),
 	write(NewT).
 	
-showMovePiece([TileLine, TileColumn], Direction):-
+showMovePiece([X, Y], Direction):-
 	T=	[[[0, 0],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -141,5 +141,5 @@ showMovePiece([TileLine, TileColumn], Direction):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	movePiece(T, [TileLine, TileColumn], Direction, NewT),
+	movePiece(T, [X, Y], Direction, NewT),
 	printBoard(NewT).
