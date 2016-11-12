@@ -247,4 +247,16 @@ getRotatingDirections(Board, [X, Y], Directions):-
 	list_to_set(NearDirectionsList, NearDirectionsSet),
 	list_to_set(ValidMovesList, ValidMovesSet),
 	intersection(NearDirectionsSet, ValidMovesSet, Directions). %Get the near possible directions to move the piece that are valid
+	
+changedArea([PrevX, PrevY], [NewX, NewY]):-
+	(PrevX =:= 3, NewX =:= 4);
+	(PrevX =:= 4, NewX =:= 3);
+	(PrevX =:= 6, NewX =:= 7);
+	(PrevX =:= 7, NewX =:= 6);
+	(PrevY =:= 3, NewY =:= 4);
+	(PrevY =:= 4, NewY =:= 3);
+	(PrevY =:= 6, NewY =:= 7);
+	(PrevY =:= 7, NewY =:= 6).
+	
+	
 /*rotatePiece(Board, [X, Y]*/
