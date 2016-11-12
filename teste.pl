@@ -182,3 +182,8 @@ showGetRotatingDirections([X, Y]):-
 	getRotatingDirections(T, [X, Y], Directions),
 	printBoard(T),
 	write(Directions).
+	
+showGetScore(Player):-
+	S = [[1,5],[2,2],[3,8],[4,1]],
+	getScore(S, Player, Score),
+	write(Score).

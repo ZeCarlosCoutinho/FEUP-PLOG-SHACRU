@@ -18,4 +18,20 @@ createPlayersScoreStructure(NumPlayers, TemporaryStructure, Iterator, ScoreStruc
 createPlayerScores(ScoreStructure):-
 	askForNumPlayers(NumPlayers),
 	createPlayersScoreStructure(NumPlayers, ScoreStructure).
+
+getScore(ScoreStructure, Player, Score):-
+	Player > 0, Player < 5,
+	getScore(ScoreStructure, Player, 1, Score).
+getScore([], _, _, _):-
+	write('ScoreStructure error').
+getScore([[ScorePlayer, ScoreNumber] | RemainingScores], Player, Iterator, Score):-
+	Player =:= Iterator,
+	Score = ScoreNumber.
+getScore([ActualScore | RemainingScores], Player, Iterator, Score):-
+	Player \= Iterator,
+	IteratorPlus is Iterator + 1,
+	getScore(RemainingScores, Player, IteratorPlus, Score).
+	
+	
+increaseMarkScore(ScoreStructure, Player, NewScoreStructure).
 	
