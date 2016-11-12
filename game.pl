@@ -1,4 +1,5 @@
 :- include('gameUtils.pl').
+:- include('boards.pl').
 
 askForNumPlayers(NumPlayers):-
 	write('NumPlayers :'),
@@ -63,11 +64,6 @@ increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStruc
 % -----------------------------------------------
 % -----------------------------------------------
 
-createBoard(2, Board).
-
-% -----------------------------------------------
-% -----------------------------------------------
-
 moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure):- %No marker -> Increases score
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
@@ -88,3 +84,70 @@ moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStruct
 	movePiece(Board, [X, Y], Direction, NewBoardTemp),
 	NewBoard = NewBoardTemp,
 	NewScoreStructure = ScoreStructure .
+
+% -----------------------------------------------
+% -----------------------------------------------
+
+createBoard(2, Scores, Board, ScoresAfterInit):-
+	Board = [[[2, 9],[0, 0],[1, 8],[0, 0],[0, 0],[0, 0],[2, 8],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[1, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[2, 4]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[1, 2],[0, 0],[0, 0],[0, 0],[2, 8],[0, 0],[1, 1]]],
+	increaseMarkScore(Scores, 1, Scores1),
+	increaseMarkScore(Scores1, 1, Scores2),
+	increaseMarkScore(Scores2, 1, Scores3),
+	increaseMarkScore(Scores3, 1, Scores4),
+	increaseMarkScore(Scores4, 2, Scores5),
+	increaseMarkScore(Scores5, 2, Scores6),
+	increaseMarkScore(Scores6, 2, Scores7),
+	increaseMarkScore(Scores7, 2, ScoresAfterInit).
+	
+createBoard(3, Scores, Board, ScoresAfterInit):-
+	Board = [[[0, 0],[0, 0],[1, 8],[0, 0],[0, 0],[0, 0],[2, 8],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[1, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[2, 4]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[3, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[3, 4]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[1, 2],[0, 0],[3, 2],[0, 0],[2, 2],[0, 0],[0, 0]]],
+			increaseMarkScore(Scores, 1, Scores1),
+			increaseMarkScore(Scores1, 1, Scores2),
+			increaseMarkScore(Scores2, 1, Scores3),
+			increaseMarkScore(Scores3, 2, Scores4),
+			increaseMarkScore(Scores4, 2, Scores5),
+			increaseMarkScore(Scores5, 2, Scores6),
+			increaseMarkScore(Scores6, 3, Scores7),
+			increaseMarkScore(Scores7, 3, Scores8),
+			increaseMarkScore(Scores8, 3, ScoresAfterInit).
+			
+createBoard(4, Scores, Board, ScoresAfterInit):-
+	Board = [[[0, 0],[0, 0],[1, 8],[0, 0],[4, 8],[0, 0],[2, 8],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[4, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[4, 4]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[1, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[2, 4]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[3, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[3, 4]],
+			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
+			[[0, 0],[0, 0],[1, 2],[0, 0],[3, 2],[0, 0],[2, 2],[0, 0],[0, 0]]],
+			increaseMarkScore(Scores, 1, Scores1),
+			increaseMarkScore(Scores1, 1, Scores2),
+			increaseMarkScore(Scores2, 1, Scores3),
+			increaseMarkScore(Scores3, 2, Scores4),
+			increaseMarkScore(Scores4, 2, Scores5),
+			increaseMarkScore(Scores5, 2, Scores6),
+			increaseMarkScore(Scores6, 3, Scores7),
+			increaseMarkScore(Scores7, 3, Scores8),
+			increaseMarkScore(Scores8, 3, Scores9),
+			increaseMarkScore(Scores9, 4, Scores10),
+			increaseMarkScore(Scores10, 4, Scores11),
+			increaseMarkScore(Scores11, 4, ScoresAfterInit).
+
+createBoard(_, _, _, _).

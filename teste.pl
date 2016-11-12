@@ -220,3 +220,10 @@ showMoveAPiece([X, Y]):-
 	moveAPiece(T, Scores, [X, Y], NewT, NewScores),
 	printBoard(NewT),
 	write(NewScores).
+	
+showCreateBoard(NumPlayers):-
+	NumPlayers > 1, NumPlayers < 5,
+	createPlayersScoreStructure(NumPlayers, Scores),
+	createBoard(NumPlayers, Scores, Board, NewScores),
+	printBoard(Board),
+	write(NewScores).
