@@ -68,4 +68,23 @@ createBoard(2, Board).
 % -----------------------------------------------
 % -----------------------------------------------
 
-moveAPiece(Board).
+moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure):- %No marker -> Increases score
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
+	TileDirection \= 0, %It must have a piece in the tile
+	write('Whats the next direction?: '),
+	read(Direction),
+	moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure).
+	
+moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure):- %No marker -> Increases score
+	\+nextTileHasMarker(Board, [X,Y], Direction),
+	getPlayer(Board, [X, Y], Player),
+	movePiece(Board, [X, Y], Direction, NewBoardTemp),
+	increaseMarkScore(ScoreStructure, Player, NewScoreStructureTemp),
+	NewBoard = NewBoardTemp,
+	NewScoreStructure = NewScoreStructureTemp .
+moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure):- %Already placed marker -> No increase in score
+	nextTileHasMarker(Board, [X,Y], Direction),
+	getPlayer(Board, [X, Y], Player), 
+	movePiece(Board, [X, Y], Direction, NewBoardTemp),
+	NewBoard = NewBoardTemp,
+	NewScoreStructure = ScoreStructure .
