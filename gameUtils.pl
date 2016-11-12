@@ -237,6 +237,15 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 	directionToCoordinates(Direction, [X, Y], [NewX, NewY]), %Get the new Tile
 	changeTile(Board, [NewX, NewY], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
 	setDirection(TempBoard, [X, Y], 0, NewBoard). %Erase the old piece from the previous tile
+
+movePiece(Board, [X, Y], Direction, NewBoard):-
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
+	TilePlayer \= 0, !,						%if it is 0, then there is no piece
+	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
+	directionToCoordinates(Direction, [X, Y], [NewX, NewY]), %Get the new Tile
+	changeTile(Board, [NewX, NewY], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
+	setDirection(TempBoard, [X, Y], 0, NewBoard). %Erase the old piece from the previous tile
+
 	
 	% Obtains the list of Directions that the piece can move in
 getRotatingDirections(Board, [X, Y], Directions):-
@@ -259,5 +268,9 @@ changedArea([PrevX, PrevY], [NewX, NewY]):-
 	(PrevY =:= 6, NewY =:= 7);
 	(PrevY =:= 7, NewY =:= 6).
 	
+nextTileHasMarker(Board, [X,Y], Direction):-
+	directionToCoordinates(Direction, [X, Y], [NewX, NewY]),
+	getTile(Board, [TilePlayer, _TileDirection], [NewX, NewY]),
+	TilePlayer \= 0.
 	
 /*rotatePiece(Board, [X, Y]*/
