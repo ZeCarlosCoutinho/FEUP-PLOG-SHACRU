@@ -187,3 +187,8 @@ showGetScore(Player):-
 	S = [[1,5],[2,2],[3,8],[4,1]],
 	getScore(S, Player, Score),
 	write(Score).
+
+showIncreaseMarkScore(Player):-
+	S = [[1,2],[2,2],[3,2],[4,2]],
+	increaseMarkScore(S, Player, NewS),
+	write(NewS).

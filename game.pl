@@ -24,14 +24,30 @@ getScore(ScoreStructure, Player, Score):-
 	getScore(ScoreStructure, Player, 1, Score).
 getScore([], _, _, _):-
 	write('ScoreStructure error').
-getScore([[ScorePlayer, ScoreNumber] | RemainingScores], Player, Iterator, Score):-
+getScore([[_ScorePlayer, ScoreNumber] | _RemainingScores], Player, Iterator, Score):-
 	Player =:= Iterator,
 	Score = ScoreNumber.
-getScore([ActualScore | RemainingScores], Player, Iterator, Score):-
+getScore([_ActualScore | RemainingScores], Player, Iterator, Score):-
 	Player \= Iterator,
 	IteratorPlus is Iterator + 1,
 	getScore(RemainingScores, Player, IteratorPlus, Score).
 	
 	
-increaseMarkScore(ScoreStructure, Player, NewScoreStructure).
+	% RETURNS TRUE EVEN IF PLAYER > ScoreStructureLength
+increaseMarkScore(ScoreStructure, Player, NewScoreStructure):-
+	Player > 0, Player < 5,
+	increaseMarkScore(ScoreStructure, [], Player, 1, NewScoreStructure).
+increaseMarkScore([], TemporaryStructure, _, _, NewScoreStructure):- % Ending condition
+	NewScoreStructure = TemporaryStructure.
+increaseMarkScore([ActualScore | RemainingScores], TemporaryStructure, Player, Iterator, NewScoreStructure):-
+	Player \= Iterator,
+	IteratorPlus is Iterator + 1,
+	append(TemporaryStructure, [ActualScore], NewTemporaryStructure),
+	increaseMarkScore(RemainingScores, NewTemporaryStructure, Player, IteratorPlus, NewScoreStructure).
+increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStructure, Player, Iterator, NewScoreStructure):-
+	Player =:= Iterator,
+	NewScoreNumber is ScoreNumber + 1,
+	IteratorPlus is Iterator + 1,
+	append(TemporaryStructure, [[ScorePlayer, NewScoreNumber]], NewTemporaryStructure),
+	increaseMarkScore(RemainingScores, NewTemporaryStructure, Player, IteratorPlus, NewScoreStructure).
 	
