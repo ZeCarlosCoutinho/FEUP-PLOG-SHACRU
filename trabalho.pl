@@ -1,6 +1,9 @@
 
 :- include('casinhas.pl').
 :- include('teste.pl').
+:- include('directions.pl').
+:- use_module(library(lists)).
+:- use_module(library(sets)).
 
 
 printRowSeparator:-
@@ -144,38 +147,7 @@ setDirection(Board, [X, Y], Direction, NewBoard):-
 	Direction > -1, Direction < 10,
 	getTile(Board, [TilePlayer, _TileDirection], [X, Y]),
 	changeTile(Board, [X, Y], [TilePlayer, Direction], NewBoard).
-% -----------------------------------------------
-% -----------------------------------------------
-directionToCoordinates(1, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y - 1,
-	ResultX is X - 1.
-directionToCoordinates(2, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y - 1,
-	ResultX is X.
-directionToCoordinates(3, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y - 1,
-	ResultX is X + 1.
-directionToCoordinates(4, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y,
-	ResultX is X - 1.
-directionToCoordinates(0, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y,
-	ResultX is X.
-directionToCoordinates(5, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y,
-	ResultX is X.
-directionToCoordinates(6, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y,
-	ResultX is X + 1.
-directionToCoordinates(7, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y + 1,
-	ResultX is X - 1.
-directionToCoordinates(8, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y + 1,
-	ResultX is X.
-directionToCoordinates(9, [X, Y], [ResultX, ResultY]):-
-	ResultY is Y + 1,
-	ResultX is X + 1.
+	
 % -----------------------------------------------
 % -----------------------------------------------	
 
@@ -256,8 +228,8 @@ changeTile(Board, [X, Y], [TilePlayer, TileDirection], ResultBoard):-
 % -----------------------------------------------
 % -----------------------------------------------
 
-% This DOESN'T ask for the final direction change of the piece!!!
-% That must be done later, after input from the player/AI
+	% This DOESN'T ask for the initial direction change of the piece!!!
+	% That must be done before, after input from the player/AI
 movePiece(Board, [X, Y], Direction, NewBoard):-
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
@@ -265,27 +237,14 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 	directionToCoordinates(Direction, [X, Y], [NewX, NewY]), %Get the new Tile
 	changeTile(Board, [NewX, NewY], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
 	setDirection(TempBoard, [X, Y], 0, NewBoard). %Erase the old piece from the previous tile
-/*
-So para se for necessario guardar:
-Tabuleiro Final=	
-		[[[2, 0],[0, 0],[1, 0],[1, 2],[1, 2],[0, 0],[2, 0],[2, 0],[1, 3]],
-		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[0, 0],[2, 0],[1, 0],[0, 0],[1, 0],[2, 0],[2, 0],[1, 0],[2, 0]],
-		[[1, 0],[1, 0],[2, 0],[1, 9],[2, 0],[1, 0],[2, 0],[1, 0],[2, 0]],
-		[[2, 4],[2, 0],[1, 0],[2, 0],[2, 0],[1, 0],[1, 0],[2, 0],[2, 6]],
-		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 0],[2, 6]],
-		[[0, 0],[0, 0],[2, 0],[1, 0],[1, 0],[1, 0],[2, 0],[1, 0],[2, 9]],
-		[[0, 0],[0, 0],[1, 0],[2, 0],[2, 0],[2, 0],[2, 0],[0, 0],[1, 0]]]
-		
-Tabuleiro Vazio=
-		[[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]]
-		*/
+	
+	% Obtains the list of Directions that the piece can move in
+getRotatingDirections(Board, [X, Y], Directions):-
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
+	TileDirection \= 0, %It must have a piece in the tile
+	getValidMoves(Board, TilePlayer, [X, Y], ValidMovesList), %Get all the valid tiles around the [X, Y] tile
+	getNearDirections(TileDirection, NearDirectionsList), %Get the near possible directions to move the piece
+	list_to_set(NearDirectionsList, NearDirectionsSet),
+	list_to_set(ValidMovesList, ValidMovesSet),
+	intersection(NearDirectionsSet, ValidMovesSet, Directions). %Get the near possible directions to move the piece that are valid
+/*rotatePiece(Board, [X, Y]*/
