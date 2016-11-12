@@ -248,6 +248,7 @@ getRotatingDirections(Board, [X, Y], Directions):-
 	list_to_set(ValidMovesList, ValidMovesSet),
 	intersection(NearDirectionsSet, ValidMovesSet, Directions). %Get the near possible directions to move the piece that are valid
 	
+	% Detects if between the two tiles there is an area change
 changedArea([PrevX, PrevY], [NewX, NewY]):-
 	(PrevX =:= 3, NewX =:= 4);
 	(PrevX =:= 4, NewX =:= 3);
