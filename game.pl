@@ -71,11 +71,12 @@ increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStruc
 % -----------------------------------------------
 
 %TODO if the chosen direction is not on the list, it loops infinitely
-moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure):- %No marker -> Increases score
+moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure, HasChangedArea):- %No marker -> Increases score
 	getTile(Board, [_, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
 	displayDirectionsToMove(Board, [X, Y]),
 	read(Direction),
+	changedArea([X, Y], Direction, HasChangedArea),
 	moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure).
 	
 moveAPieceAux(Board, ScoreStructure, [_X, _Y], 0, NewBoard, NewScoreStructure):- %In case of pass
@@ -105,7 +106,12 @@ displayDirectionsToMoveAux([Direction | Rest]):-
 	displayDirectionName(Direction), write(' - '), write(Direction),nl,
 	displayDirectionsToMoveAux(Rest).
 	
-rotateAPiece.
+rotateAPiece(Board, Piece, 0, NewBoard).
+rotateAPiece(Board, Piece, 1, NewBoard):-
+	askForRotation(Orientation),
+	rotatePiece(Board, Piece, Orientation, NewBoard).
+
+	
 % -----------------------------------------------
 % -----------------------------------------------
 
@@ -206,7 +212,7 @@ displayPiecesToChoose([Piece | Rest], Iterator):-
 
 turn(Board, Player, NewBoard):-
 	choosePiece(Board, Player, PieceChosen),
-	moveAPiece(Board, ScoreStructure, PieceChosen, NewBoard, NewScoreStructure).
+	moveAPiece(Board, ScoreStructure, PieceChosen, NewBoard, NewScoreStructure, HasChangedArea).
 	
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
