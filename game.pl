@@ -174,14 +174,16 @@ createBoard(_, _, _, _).
 % -----------------------------------------------
 % -----------------------------------------------
 choosePiece(Board, Player, Piece):-
-	getPlayerPieces(Board, Player, Pieces, PiecesLength),
+	getPlayerMovingPieces(Board, Player, Pieces, PiecesLength),
 	write('Which piece do you want to move? '), nl,
 	displayPiecesToChoose(Pieces),
 	read(PieceChosen),
-	PieceChosen > 0, PieceChosen < PiecesLength + 1,
+	PieceChosen > -1, PieceChosen < PiecesLength + 1,
 	choosePieceAux(Pieces, PieceChosen, Piece).
 
-choosePieceAux([], _, _):- write('choosePieceAux: wrong index'), fail.
+choosePieceAux(_, 0, Piece):-
+	Piece = [].
+%choosePieceAux([], _, _):- write('choosePieceAux: wrong index'), fail.
 choosePieceAux([Piece | _Rest], 1, PieceChosen):-
 	PieceChosen = Piece.
 choosePieceAux([_Piece | Rest], DecreasingIndex, PieceChosen):-
@@ -190,12 +192,15 @@ choosePieceAux([_Piece | Rest], DecreasingIndex, PieceChosen):-
 		choosePieceAux(Rest, DecreasingIndexMinus, PieceChosen).
 
 displayPiecesToChoose(Pieces):- displayPiecesToChoose(Pieces, 1).
-displayPiecesToChoose([], _).
+displayPiecesToChoose([], _):-
+	write('0 - Pass'), nl .
 displayPiecesToChoose([Piece | Rest], Iterator):-
 	write(Iterator), write(' - '), write(Piece), nl,
 	IteratorPlus is Iterator + 1,
 	displayPiecesToChoose(Rest, IteratorPlus).
 
+turn(Board, Player, NewBoard):-
+	choosePiece(Board, Player).
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
 %TODO Incluir a opcao "Passar o turno" na escolha das pecas
