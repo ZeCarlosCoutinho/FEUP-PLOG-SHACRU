@@ -240,6 +240,8 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 	changeTile(Board, [NewX, NewY], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
 	setDirection(TempBoard, [X, Y], 0, NewBoard). %Erase the old piece from the previous tile
 
+% -----------------------------------------------
+% -----------------------------------------------
 	
 	% Obtains the list of Directions that the piece can move in
 getRotatingDirections(Board, [X, Y], Directions):-
@@ -250,6 +252,32 @@ getRotatingDirections(Board, [X, Y], Directions):-
 	list_to_set(NearDirectionsList, NearDirectionsSet),
 	list_to_set(ValidMovesList, ValidMovesSet),
 	intersection(NearDirectionsSet, ValidMovesSet, Directions). %Get the near possible directions to move the piece that are valid
+
+rotatePiece(Board, [X, Y], 1, NewBoard):- % CounterClockWise
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
+	TilePlayer \= 0, !,						%if it is 0, then there is no piece
+	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
+	getNearDirections(TileDirection, [CounterClockWise, Same, ClockWise]),
+	setDirection(Board, [X, Y], CounterClockWise, NewBoard).
+	
+rotatePiece(Board, [X, Y], 2, NewBoard):- % Same direction
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
+	TilePlayer \= 0, !,						%if it is 0, then there is no piece
+	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
+	getNearDirections(TileDirection, [CounterClockWise, Same, ClockWise]),
+	setDirection(Board, [X, Y], Same, NewBoard).
+	
+rotatePiece(Board, [X, Y], 3, NewBoard):- % ClockWise
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
+	TilePlayer \= 0, !,						%if it is 0, then there is no piece
+	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
+	getNearDirections(TileDirection, [CounterClockWise, Same, ClockWise]),
+	setDirection(Board, [X, Y], ClockWise, NewBoard).
+	
+rotatePiece(_, _, _, _):- fail .
+	
+% -----------------------------------------------
+% -----------------------------------------------
 	
 	% Detects if between the two tiles there is an area change
 changedArea([PrevX, PrevY], [NewX, NewY]):-
@@ -261,10 +289,11 @@ changedArea([PrevX, PrevY], [NewX, NewY]):-
 	(PrevY =:= 4, NewY =:= 3);
 	(PrevY =:= 6, NewY =:= 7);
 	(PrevY =:= 7, NewY =:= 6).
-	
+
+% -----------------------------------------------
+% -----------------------------------------------
+
 nextTileHasMarker(Board, [X,Y], Direction):-
 	directionToCoordinates(Direction, [X, Y], [NewX, NewY]),
 	getTile(Board, [TilePlayer, _TileDirection], [NewX, NewY]),
 	TilePlayer \= 0.
-	
-/*rotatePiece(Board, [X, Y]*/

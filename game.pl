@@ -1,5 +1,4 @@
 :- include('gameUtils.pl').
-:- include('boards.pl').
 
 askForNumPlayers(NumPlayers):-
 	write('NumPlayers :'),
@@ -7,6 +6,13 @@ askForNumPlayers(NumPlayers):-
 	NumPlayersTemp > 1, NumPlayersTemp < 5,
 	NumPlayers = NumPlayersTemp .
 	
+askForRotation(Orientation):-
+	write('In which direction do you want to rotate the piece?'),nl,
+	write('1 - Counterclockwise; 2 - No Rotation; 3 - Clockwise'), nl,
+	read(OrientationTemp), nl,
+	OrientationTemp > 0, OrientationTemp < 4,
+	Orientation = OrientationTemp .
+
 % -----------------------------------------------
 % -----------------------------------------------	
 
@@ -151,3 +157,6 @@ createBoard(4, Scores, Board, ScoresAfterInit):-
 			increaseMarkScore(Scores11, 4, ScoresAfterInit).
 
 createBoard(_, _, _, _).
+
+% -----------------------------------------------
+% -----------------------------------------------

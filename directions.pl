@@ -35,12 +35,12 @@ directionToCoordinates(9, [X, Y], [ResultX, ResultY]):-
 % -----------------------------------------------
 
 getNearDirections(0, NearDirections):- NearDirections = [0].
-getNearDirections(1, NearDirections):- NearDirections = [1, 2, 4].
+getNearDirections(1, NearDirections):- NearDirections = [4, 1, 2].
 getNearDirections(2, NearDirections):- NearDirections = [1, 2, 3].
 getNearDirections(3, NearDirections):- NearDirections = [2, 3, 6].
-getNearDirections(4, NearDirections):- NearDirections = [1, 4, 7].
+getNearDirections(4, NearDirections):- NearDirections = [7, 4, 1].
 getNearDirections(5, NearDirections):- NearDirections = [0].
 getNearDirections(6, NearDirections):- NearDirections = [3, 6, 9].
-getNearDirections(7, NearDirections):- NearDirections = [4, 7, 8].
-getNearDirections(8, NearDirections):- NearDirections = [7, 8, 9].
-getNearDirections(9, NearDirections):- NearDirections = [6, 8, 9].
+getNearDirections(7, NearDirections):- NearDirections = [8, 7, 4].
+getNearDirections(8, NearDirections):- NearDirections = [9, 8, 7].
+getNearDirections(9, NearDirections):- NearDirections = [6, 9, 8].
