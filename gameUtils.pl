@@ -297,3 +297,27 @@ nextTileHasMarker(Board, [X,Y], Direction):-
 	directionToCoordinates(Direction, [X, Y], [NewX, NewY]),
 	getTile(Board, [TilePlayer, _TileDirection], [NewX, NewY]),
 	TilePlayer \= 0.
+	
+% -----------------------------------------------
+% -----------------------------------------------
+getPlayerPieces(Board, Player, Pieces):- %TODO Verification of NumPlayers
+	Player > 0, Player < 5,
+	getPlayerPieces(Board, Player, 1, [], Pieces).
+getPlayerPieces([], _, _, TempPieces, Pieces):-
+	Pieces = TempPieces.
+getPlayerPieces([Line | Rest], Player, ActualY, TempPieces, Pieces):-
+	getPlayerPiecesLine(Line, Player, [1, ActualY], TempPieces, TempPiecesPlus),
+	ActualYPlus is ActualY + 1,
+	getPlayerPieces(Rest, Player, ActualYPlus, TempPiecesPlus, Pieces).
+
+getPlayerPiecesLine([], _, _, TempPieces, Pieces):-
+	Pieces = TempPieces.
+getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, ActualY], TempPieces, Pieces):-
+	TilePlayer \= Player,
+	ActualXPlus is ActualX + 1,
+	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPieces, Pieces).
+getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, ActualY], TempPieces, Pieces):-
+	TilePlayer =:= Player,
+	append(TempPieces, [[ActualX, ActualY]], TempPiecesPlus),
+	ActualXPlus is ActualX + 1,
+	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPiecesPlus, Pieces).
