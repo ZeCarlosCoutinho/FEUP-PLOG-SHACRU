@@ -1,7 +1,7 @@
 :- include('gameUtils.pl').
 
 askForNumPlayers(NumPlayers):-
-	write('NumPlayers :'),
+	write('Number of Players :'),
 	read(NumPlayersTemp), nl,
 	NumPlayersTemp > 1, NumPlayersTemp < 5,
 	NumPlayers = NumPlayersTemp .
@@ -16,7 +16,7 @@ askForRotation(Orientation):-
 % -----------------------------------------------
 % -----------------------------------------------	
 
-createPlayersScoreStructure(NumPlayers, ScoreStructure):- createPlayersScoreStructure(NumPlayers, [], 1, ScoreStructure).
+createPlayersScores(NumPlayers, ScoreStructure):- createPlayersScoreStructure(NumPlayers, [], 1, ScoreStructure).
 createPlayersScoreStructure(NumPlayers, TemporaryStructure, Iterator, ScoreStructure):- %Creates the ScoreStructure after all player scores are created
 	Iterator > NumPlayers,
 	ScoreStructure = TemporaryStructure.
@@ -24,13 +24,27 @@ createPlayersScoreStructure(NumPlayers, TemporaryStructure, Iterator, ScoreStruc
 	IteratorPlus is Iterator + 1,
 	append(TemporaryStructure, [[Iterator, 0]], NewTemporaryStructure),
 	createPlayersScoreStructure(NumPlayers, NewTemporaryStructure, IteratorPlus, ScoreStructure).
+	
+	
+createPlayerList(NumPlayers, PlayerList):- 
+	NumPlayers > 1, NumPlayers < 5, 
+	createPlayerList(NumPlayers, 1, [], PlayerList).
+createPlayerList(NumPlayers, Iterator, TempList, PlayerList):-
+	NumPlayers =:= Iterator,
+	append(TempList, [Iterator], PlayerList).
+createPlayerList(NumPlayers, Iterator, TempList, PlayerList):-
+	NumPlayers \= Iterator,
+	IteratorPlus is Iterator + 1,
+	append(TempList, [Iterator], TempListPlus),
+	createPlayerList(NumPlayers, IteratorPlus, TempListPlus, PlayerList).
+	
 
 % -----------------------------------------------
 % -----------------------------------------------
-
+/*
 createPlayerScores(ScoreStructure):-
 	askForNumPlayers(NumPlayers),
-	createPlayersScoreStructure(NumPlayers, ScoreStructure).
+	createPlayersScoreStructure(NumPlayers, ScoreStructure).*/
 
 % -----------------------------------------------
 % -----------------------------------------------
@@ -210,9 +224,19 @@ displayPiecesToChoose([Piece | Rest], Iterator):-
 % -----------------------------------------------
 % -----------------------------------------------
 
-turn(Board, Player, NewBoard):-
+turn(Board, Scores, Player, NewBoard, NewScores):-
 	choosePiece(Board, Player, PieceChosen),
-	moveAPiece(Board, ScoreStructure, PieceChosen, NewBoard, NewScoreStructure, HasChangedArea).
+	moveAPiece(Board, Scores, PieceChosen, NewBoard1, NewScores, HasChangedArea),
+	rotateAPiece(NewBoard1, PieceChosen, HasChangedArea, NewBoard2).
+
+	
+game :-
+	%TODO Presentation + Instructions
+	askForNumPlayers(NumPlayers),
+	createPlayerScores(NumPlayers, Scores),
+	createBoard(NumPlayers, Scores, Board, ScoresAfterInit).
+	
+	%TODO getVictoriousPlayers
 	
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
