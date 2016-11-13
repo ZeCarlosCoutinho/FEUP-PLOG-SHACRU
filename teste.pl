@@ -312,3 +312,8 @@ showRotateAPiece([X, Y]):-
 showCreatePlayerList(NumPlayers):-
 	createPlayerList(NumPlayers, PlayerList),
 	write(PlayerList).
+	
+showCheckEndGame:-
+	P = [[1, 0], [2, 0], [3, 1], [4, 0]],
+	checkEndGame(P, 4, Winner),
+	write(Winner).

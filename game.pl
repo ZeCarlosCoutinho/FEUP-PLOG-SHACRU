@@ -31,11 +31,11 @@ createPlayerList(NumPlayers, PlayerList):-
 	createPlayerList(NumPlayers, 1, [], PlayerList).
 createPlayerList(NumPlayers, Iterator, TempList, PlayerList):-
 	NumPlayers =:= Iterator,
-	append(TempList, [Iterator], PlayerList).
+	append(TempList, [[Iterator, 1]], PlayerList).
 createPlayerList(NumPlayers, Iterator, TempList, PlayerList):-
 	NumPlayers \= Iterator,
 	IteratorPlus is Iterator + 1,
-	append(TempList, [Iterator], TempListPlus),
+	append(TempList, [[Iterator, 1]], TempListPlus),
 	createPlayerList(NumPlayers, IteratorPlus, TempListPlus, PlayerList).
 	
 
@@ -80,11 +80,38 @@ increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStruc
 	IteratorPlus is Iterator + 1,
 	append(TemporaryStructure, [[ScorePlayer, NewScoreNumber]], NewTemporaryStructure),
 	increaseMarkScore(RemainingScores, NewTemporaryStructure, Player, IteratorPlus, NewScoreStructure).
+
+updatePlayerList(Board, Player, [ActualPlayerElem | Rest], NewPlayerList):-
+	getPlayerMovingPieces(Board, Player, Pieces, PiecesLength),
+	updatePlayerListAux(PiecesLength, [ActualPlayerElem | Rest], NewPlayerList). %Passes to the next player, and updates if he can move any piece
+	
+updatePlayerListAux(PiecesLength, [[PlayerNumber, IsAbleToPlay] | Rest], NewPlayerList):-
+	PiecesLength > 0,
+	append(Rest, [[PlayerNumber, 1]], NewPlayerList).
+updatePlayerListAux(PiecesLength, [[PlayerNumber, IsAbleToPlay] | Rest], NewPlayerList):-
+	PiecesLength =:= 0,
+	append(Rest, [[PlayerNumber, 0]], NewPlayerList).
+	
+/*
+checkEndGame(PlayerList, Winner):- checkEndGame(PlayerList, 0, Winner).
+checkEndGame([[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], TempWinner, Winner):-
+	%IsAbleToPlay =:= 0*/
+checkEndGame(PlayerList, PlayerListLength, Winner):-
+	list_to_set(PlayerList, PlayerSet),
+	selectchk([WinnerPlayer, 1], PlayerSet, Residue1),
+	\+selectchk([_, 1], Residue1, Residue2),
+	Winner = WinnerPlayer.
+checkEndGame(PlayerList, PlayerListLength, Winner):-
+	Winner = 0.
 	
 % -----------------------------------------------
 % -----------------------------------------------
 
 %TODO if the chosen direction is not on the list, it loops infinitely
+moveAPiece(Board, ScoreStructure, [], NewBoard, NewScoreStructure, HasChangedArea):- %In case the player chooses to pass the turn
+	NewBoard = Board,
+	NewScoreStructure = ScoreStructure,
+	HasChangedArea = 0.
 moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure, HasChangedArea):- %No marker -> Increases score
 	getTile(Board, [_, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
@@ -229,12 +256,18 @@ turn(Board, Scores, Player, NewBoard, NewScores):-
 	moveAPiece(Board, Scores, PieceChosen, NewBoard1, NewScores, HasChangedArea),
 	rotateAPiece(NewBoard1, PieceChosen, HasChangedArea, NewBoard2).
 
+gameCycle(Board, Scores, [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], Winner):-
+	PlayerList = [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], %TODO Just for code readability, but should i remove it(performance)
+	turn(Board, Scores, ActualPlayer, NewBoard, NewScores),
+	updatePlayerList(NewBoard, ActualPlayer, PlayerList, [[NewActualPlayer, IsAbleToPlay] | RemainingPlayerList]).
 	
+
 game :-
 	%TODO Presentation + Instructions
 	askForNumPlayers(NumPlayers),
 	createPlayerScores(NumPlayers, Scores),
-	createBoard(NumPlayers, Scores, Board, ScoresAfterInit).
+	createBoard(NumPlayers, Scores, Board, ScoresAfterInit),
+	createPlayerList(NumPlayers, PlayerList).
 	
 	%TODO getVictoriousPlayers
 	
