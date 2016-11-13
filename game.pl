@@ -95,7 +95,7 @@ moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStruct
 	NewScoreStructure = ScoreStructure .
 
 displayDirectionsToMove(Board, [X, Y]):-
-	getRotatingDirections(Board, [X, Y], Directions),
+	getMovingDirections(Board, [X, Y], Directions),
 	write('Whats the next direction? '), nl,
 	displayDirectionsToMoveAux(Directions).
 	

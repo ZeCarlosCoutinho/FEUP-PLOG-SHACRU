@@ -234,7 +234,7 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
 	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
-	getRotatingDirections(Board, [X, Y], ValidDirections),!, %get valid directions to move
+	getMovingDirections(Board, [X, Y], ValidDirections),!, %get valid directions to move
 	memberchk(Direction, ValidDirections), %check if direction is a valid direction
 	directionToCoordinates(Direction, [X, Y], [NewX, NewY]), %Get the new Tile
 	changeTile(Board, [NewX, NewY], [TilePlayer, Direction], TempBoard), %Place the marker and the piece in the new Tile
@@ -244,7 +244,7 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 % -----------------------------------------------
 	
 	% Obtains the list of Directions that the piece can move in
-getRotatingDirections(Board, [X, Y], Directions):-
+getMovingDirections(Board, [X, Y], Directions):-
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
 	getValidMoves(Board, TilePlayer, [X, Y], ValidMovesList), %Get all the valid tiles around the [X, Y] tile
@@ -328,3 +328,6 @@ getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, Act
 	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPiecesPlus, Pieces, PiecesLengthPlus, PiecesLength).
 	
 % TODO Funcao que filtra o getPlayerPieces para ter so aquelas que se possam movimentar
+getPlayerMovingPieces(Board, Player, Pieces):-
+	getPlayerPieces(Board, Player, AllPieces, AllPiecesLength),
+	

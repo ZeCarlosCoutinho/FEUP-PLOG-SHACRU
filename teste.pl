@@ -169,7 +169,7 @@ showMovePiece([X, Y], Direction):-
 	movePiece(T, [X, Y], Direction, NewT),
 	printBoard(NewT).
 	
-showGetRotatingDirections([X, Y]):-
+showGetMovingDirections([X, Y]):-
 	T=	[[[1, 7],[0, 0],[2, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[1, 9],[2, 1],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
@@ -179,7 +179,7 @@ showGetRotatingDirections([X, Y]):-
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]]],
-	getRotatingDirections(T, [X, Y], Directions),
+	getMovingDirections(T, [X, Y], Directions),
 	printBoard(T),
 	write(Directions).
 	
