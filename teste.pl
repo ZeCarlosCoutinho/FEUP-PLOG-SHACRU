@@ -317,3 +317,10 @@ showCheckEndGame:-
 	P = [[1, 0], [2, 0], [3, 1], [4, 0]],
 	checkEndGame(P, 4, Winner),
 	write(Winner).
+
+showGetVictoriousPlayer:-
+	S = [[1,5],[2,2],[3,8],[4,8]],
+	getVictoriousPlayer(S, WinningPair),
+	getSecondPlace(S, SecondPlace),
+	write(WinningPair),nl,
+	write(SecondPlace).

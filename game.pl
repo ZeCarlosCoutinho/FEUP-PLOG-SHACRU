@@ -276,9 +276,9 @@ gameCycle(Board, Scores, [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], W
 	write('gameCycle: updated player list'), nl,
 	checkEndGame(NewPlayerList, NewWinner),
 	gameCycle(NewBoard, NewScores, NewPlayerList, NewWinner, FinalWinner).
-gameCycle(_, _, _, Winner, FinalWinner):-
+gameCycle(_, Scores, _, Winner, FinalWinner):-
 	Winner \= 0,
-	FinalWinner = Winner.
+	getWinner(Scores, FinalWinner).
 
 game :-
 	%TODO Presentation + Instructions
@@ -287,12 +287,50 @@ game :-
 	createBoard(NumPlayers, Scores, Board, ScoresAfterInit),
 	createPlayerList(NumPlayers, PlayerList),
 	gameCycle(Board, ScoresAfterInit, PlayerList, 0, FinalWinner),
-	nl, nl, write(FinalWinner), nl .
+	nl, nl,
+	displayFinalWinner(FinalWinner).
 	
-	%TODO getVictoriousPlayers
 	
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
 %TODO Funcao que verifica se ha casas ainda por conquistar, segundo uma das 3 direcoes
 %TODO So acabar o jogo quando nenhuma peça se puder mexer
 %TODO Aumentar a robustez do codigo. Em casos de input invalido, repetir a instrucao
+
+% -----------------------------------------------
+% -----------------------------------------------
+lessScore([_Player1, Score1], [_Player2, Score2]):-
+	Score1 < Score2.
+	
+getSecondPlace(Scores, SecondPlace):-
+	max_member(lessScore, WinningPair, Scores),
+	delete(Scores, WinningPair, SecondScores),
+	max_member(lessScore, SecondPlace, SecondScores).
+
+getVictoriousPlayer(Scores, WinningPair):-
+	max_member(lessScore, WinningPair, Scores).
+	
+getWinner(Scores, Winner):-
+	getVictoriousPlayer(Scores, WinningPair),
+	getSecondPlace(Scores, SecondPlacePair),
+	getWinnerAux(WinningPair, SecondPlacePair, Winner).
+
+getWinnerAux([FirstPlace, Score1], [SecondPlace, Score2], Winner):-
+	Score1 = Score2,
+	Winner = 0.
+getWinnerAux([FirstPlace, Score1], [SecondPlace, Score2], Winner):-
+	Score1 \= Score2,
+	Winner = FirstPlace.
+
+displayFinalWinner(0):-
+	write('#######################################################'), nl,
+	write('#########             IT´S A                  #########'), nl,
+	write('#########              DRAW 	                 #########'), nl,
+	write('#######################################################'), nl .
+displayFinalWinner(FinalWinner):-
+	FinalWinner \= 0,
+	write('#######################################################'), nl,
+	write('#########             WINNER                  #########'), nl,
+	write('#########            PLAYER '), write(FinalWinner), write('	                 #########'), nl,
+	write('#######################################################'), nl .
+	
