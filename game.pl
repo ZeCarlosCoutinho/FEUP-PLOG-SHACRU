@@ -82,37 +82,35 @@ increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStruc
 	increaseMarkScore(RemainingScores, NewTemporaryStructure, Player, IteratorPlus, NewScoreStructure).
 
 updatePlayerList(Board, Player, [ActualPlayerElem | Rest], NewPlayerList):-
-	getPlayerMovingPieces(Board, Player, Pieces, PiecesLength),
+	getPlayerMovingPieces(Board, Player, _Pieces, PiecesLength),
 	updatePlayerListAux(PiecesLength, [ActualPlayerElem | Rest], NewPlayerList). %Passes to the next player, and updates if he can move any piece
 	
-updatePlayerListAux(PiecesLength, [[PlayerNumber, IsAbleToPlay] | Rest], NewPlayerList):-
+updatePlayerListAux(PiecesLength, [[PlayerNumber, _IsAbleToPlay] | Rest], NewPlayerList):-
 	PiecesLength > 0,
 	append(Rest, [[PlayerNumber, 1]], NewPlayerList).
-updatePlayerListAux(PiecesLength, [[PlayerNumber, IsAbleToPlay] | Rest], NewPlayerList):-
+updatePlayerListAux(PiecesLength, [[PlayerNumber, _IsAbleToPlay] | Rest], NewPlayerList):-
 	PiecesLength =:= 0,
+	write('Cant move more'), nl, 
 	append(Rest, [[PlayerNumber, 0]], NewPlayerList).
 	
-/*
-checkEndGame(PlayerList, Winner):- checkEndGame(PlayerList, 0, Winner).
-checkEndGame([[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], TempWinner, Winner):-
-	%IsAbleToPlay =:= 0*/
-checkEndGame(PlayerList, PlayerListLength, Winner):-
+
+checkEndGame(PlayerList, Winner):-
 	list_to_set(PlayerList, PlayerSet),
 	selectchk([WinnerPlayer, 1], PlayerSet, Residue1),
-	\+selectchk([_, 1], Residue1, Residue2),
+	\+selectchk([_, 1], Residue1, _Residue2),
 	Winner = WinnerPlayer.
-checkEndGame(PlayerList, PlayerListLength, Winner):-
+checkEndGame(_PlayerList, Winner):-
 	Winner = 0.
 	
 % -----------------------------------------------
 % -----------------------------------------------
 
 %TODO if the chosen direction is not on the list, it loops infinitely
-moveAPiece(Board, ScoreStructure, [], NewBoard, NewScoreStructure, HasChangedArea):- %In case the player chooses to pass the turn
+moveAPiece(Board, ScoreStructure, [], NewBoard, NewScoreStructure, _, HasChangedArea):- %In case the player chooses to pass the turn
 	NewBoard = Board,
 	NewScoreStructure = ScoreStructure,
 	HasChangedArea = 0.
-moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure, HasChangedArea):- %No marker -> Increases score
+moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure, Direction, HasChangedArea):- %No marker -> Increases score
 	getTile(Board, [_, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
 	displayDirectionsToMove(Board, [X, Y]),
@@ -125,14 +123,20 @@ moveAPieceAux(Board, ScoreStructure, [_X, _Y], 0, NewBoard, NewScoreStructure):-
 	NewScoreStructure = ScoreStructure.
 moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure):- %No marker -> Increases score
 	\+nextTileHasMarker(Board, [X,Y], Direction),
+	write('movePieceAux: No Marker'), nl,
 	getPlayer(Board, [X, Y], Player),
+	write('movePieceAux: got Player'), nl,
 	movePiece(Board, [X, Y], Direction, NewBoardTemp),
+	write('movePieceAux: movedPiece'), nl,
 	increaseMarkScore(ScoreStructure, Player, NewScoreStructureTemp),
+	write('movePieceAux: increasedScore'), nl,
 	NewBoard = NewBoardTemp,
 	NewScoreStructure = NewScoreStructureTemp .
 moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure):- %Already placed marker -> No increase in score
 	nextTileHasMarker(Board, [X,Y], Direction),
+	write('movePieceAux: Has Marker'), nl,
 	movePiece(Board, [X, Y], Direction, NewBoardTemp),
+	write('movePieceAux: movedPiece'), nl,
 	NewBoard = NewBoardTemp,
 	NewScoreStructure = ScoreStructure .
 
@@ -147,10 +151,13 @@ displayDirectionsToMoveAux([Direction | Rest]):-
 	displayDirectionName(Direction), write(' - '), write(Direction),nl,
 	displayDirectionsToMoveAux(Rest).
 	
-rotateAPiece(Board, Piece, 0, NewBoard).
-rotateAPiece(Board, Piece, 1, NewBoard):-
+rotateAPiece(Board, _, 0, _, NewBoard):-
+	NewBoard = Board.
+rotateAPiece(Board, Piece, 1, Direction, NewBoard):-
+	printBoard(Board),
+	directionToCoordinates(Direction, Piece, NewPiece), %to get the new piece after moveAPiece
 	askForRotation(Orientation),
-	rotatePiece(Board, Piece, Orientation, NewBoard).
+	rotatePiece(Board, NewPiece, Orientation, NewBoard).
 
 	
 % -----------------------------------------------
@@ -165,7 +172,7 @@ createBoard(2, Scores, Board, ScoresAfterInit):-
 			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 			[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
-			[[0, 0],[0, 0],[1, 2],[0, 0],[0, 0],[0, 0],[2, 8],[0, 0],[1, 1]]],
+			[[0, 0],[0, 0],[1, 2],[0, 0],[0, 0],[0, 0],[2, 2],[0, 0],[1, 1]]],
 	increaseMarkScore(Scores, 1, Scores1),
 	increaseMarkScore(Scores1, 1, Scores2),
 	increaseMarkScore(Scores2, 1, Scores3),
@@ -252,25 +259,40 @@ displayPiecesToChoose([Piece | Rest], Iterator):-
 % -----------------------------------------------
 
 turn(Board, Scores, Player, NewBoard, NewScores):-
+	printBoard(Board),
+	write('Player '), write(Player), write(' turn: '), nl,
 	choosePiece(Board, Player, PieceChosen),
-	moveAPiece(Board, Scores, PieceChosen, NewBoard1, NewScores, HasChangedArea),
-	rotateAPiece(NewBoard1, PieceChosen, HasChangedArea, NewBoard2).
+	moveAPiece(Board, Scores, PieceChosen, NewBoard1, NewScores, Direction, HasChangedArea),
+	write('HAS CHANGED AREA' ), write(HasChangedArea), nl,
+	rotateAPiece(NewBoard1, PieceChosen, HasChangedArea, Direction, NewBoard),
+	write('turn: Rotated piece'), nl .
 
-gameCycle(Board, Scores, [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], Winner):-
-	PlayerList = [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], %TODO Just for code readability, but should i remove it(performance)
+gameCycle(Board, Scores, [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], Winner, FinalWinner):-
+	Winner =:= 0,
+	% PlayerList = [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], %TODO Just for code readability, but should i remove it(performance)
+	%write(PlayerList),nl,
 	turn(Board, Scores, ActualPlayer, NewBoard, NewScores),
-	updatePlayerList(NewBoard, ActualPlayer, PlayerList, [[NewActualPlayer, IsAbleToPlay] | RemainingPlayerList]).
-	
+	updatePlayerList(NewBoard, ActualPlayer, [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], NewPlayerList),
+	write('gameCycle: updated player list'), nl,
+	checkEndGame(NewPlayerList, NewWinner),
+	gameCycle(NewBoard, NewScores, NewPlayerList, NewWinner, FinalWinner).
+gameCycle(_, _, _, Winner, FinalWinner):-
+	Winner \= 0,
+	FinalWinner = Winner.
 
 game :-
 	%TODO Presentation + Instructions
 	askForNumPlayers(NumPlayers),
-	createPlayerScores(NumPlayers, Scores),
+	createPlayersScores(NumPlayers, Scores),
 	createBoard(NumPlayers, Scores, Board, ScoresAfterInit),
-	createPlayerList(NumPlayers, PlayerList).
+	createPlayerList(NumPlayers, PlayerList),
+	gameCycle(Board, ScoresAfterInit, PlayerList, 0, FinalWinner),
+	nl, nl, write(FinalWinner), nl .
 	
 	%TODO getVictoriousPlayers
 	
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
-%TODO Incluir a opcao "Passar o turno" na escolha das pecas
+%TODO Funcao que verifica se ha casas ainda por conquistar, segundo uma das 3 direcoes
+%TODO So acabar o jogo quando nenhuma peça se puder mexer
+%TODO Aumentar a robustez do codigo. Em casos de input invalido, repetir a instrucao

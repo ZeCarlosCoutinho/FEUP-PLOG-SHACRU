@@ -126,9 +126,10 @@ getLineElement([_Element|Rest], Tile, ColumnNumber, Iterator):-
 
 	
 getTile(Board, Tile, [X, Y]):-
+	!,
 	getLine(Board, Line, Y), !, % - Avoids redoing getLine
-	getLineElement(Line, Tile, X),
-	write(Tile), nl.
+	getLineElement(Line, Tile, X).
+	%WARNING write(Tile), nl.
 	
 
 getPlayer(Board, [X, Y], Player):-
@@ -254,11 +255,13 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 % -----------------------------------------------
 
 rotatePiece(Board, [X, Y], 1, NewBoard):- % CounterClockWise
-	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get Tile
+	write('Got tile'), nl,
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
 	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
 	getNearDirections(TileDirection, [CounterClockWise, _Same, _ClockWise]),
-	setDirection(Board, [X, Y], CounterClockWise, NewBoard).
+	setDirection(Board, [X, Y], CounterClockWise, NewBoard),
+	write('Rotate Piece done'), nl.
 	
 rotatePiece(Board, [X, Y], 2, NewBoard):- % Same direction
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
@@ -302,8 +305,8 @@ changedArea([PrevX, PrevY], Direction, HasChanged):-
 % -----------------------------------------------
 
 nextTileHasMarker(Board, [X,Y], Direction):-
-	directionToCoordinates(Direction, [X, Y], [NewX, NewY]),
-	getTile(Board, [TilePlayer, _TileDirection], [NewX, NewY]),
+	directionToCoordinates(Direction, [X, Y], [NewX, NewY]),!,
+	getTile(Board, [TilePlayer, _TileDirection], [NewX, NewY]),!,
 	TilePlayer \= 0.
 	
 % -----------------------------------------------
@@ -343,14 +346,14 @@ pieceCanMove(Board, [X, Y]):-
 	
 % -----------------------------------------------
 % -----------------------------------------------
-getPlayerMovingPieces(Board, Player, Pieces, PiecesLength):-
-	getPlayerPieces(Board, Player, AllPieces, AllPiecesLength),
+getPlayerMovingPieces(Board, Player, Pieces, PiecesLength):- %Only return the pieces of the player that can move
+	getPlayerPieces(Board, Player, AllPieces, _AllPiecesLength),
 	getPlayerMovingPiecesAux(Board, AllPieces, Pieces, PiecesLength).
 	
 getPlayerMovingPiecesAux(Board, AllPieces, MovingPieces, MovingPiecesLength):-
 	getPlayerMovingPiecesAux(Board, AllPieces, [], MovingPieces, 0, MovingPiecesLength).
 	
-getPlayerMovingPiecesAux(Board, [], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-
+getPlayerMovingPiecesAux(_Board, [], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-
 	MovingPieces = TempMovingPieces,
 	MovingPiecesLength = TempMovingPiecesLength.
 getPlayerMovingPiecesAux(Board, [Piece | Rest], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-

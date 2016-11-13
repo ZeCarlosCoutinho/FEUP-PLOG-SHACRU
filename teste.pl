@@ -306,7 +306,7 @@ showRotateAPiece([X, Y]):-
 		[[3, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[3, 4]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[1, 2],[0, 0],[3, 2],[0, 0],[2, 2],[0, 0],[0, 0]]],
-	rotateAPiece(T, [X, Y], 1, NewT),
+	rotateAPiece(T, [X, Y], 1, 0,NewT),
 	printBoard(NewT).
 	
 showCreatePlayerList(NumPlayers):-
