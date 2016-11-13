@@ -44,3 +44,14 @@ getNearDirections(6, NearDirections):- NearDirections = [3, 6, 9].
 getNearDirections(7, NearDirections):- NearDirections = [8, 7, 4].
 getNearDirections(8, NearDirections):- NearDirections = [9, 8, 7].
 getNearDirections(9, NearDirections):- NearDirections = [6, 9, 8].
+
+displayDirectionName(0):-write('Pass').
+displayDirectionName(1):-write('Up-Left').
+displayDirectionName(2):-write('Up').
+displayDirectionName(3):-write('Up-Right').
+displayDirectionName(4):-write('Left').
+displayDirectionName(5):-write('Pass').
+displayDirectionName(6):-write('Right').
+displayDirectionName(7):-write('Down-Left').
+displayDirectionName(8):-write('Down').
+displayDirectionName(9):-write('Down-Right').

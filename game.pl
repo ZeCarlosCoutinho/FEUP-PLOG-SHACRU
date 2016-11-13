@@ -70,13 +70,17 @@ increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStruc
 % -----------------------------------------------
 % -----------------------------------------------
 
+%TODO if the chosen direction is not on the list, it loops infinitely
 moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure):- %No marker -> Increases score
 	getTile(Board, [_, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
-	write('Whats the next direction?: '),
+	displayDirectionsToMove(Board, [X, Y]),
 	read(Direction),
 	moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure).
 	
+moveAPieceAux(Board, ScoreStructure, [_X, _Y], 0, NewBoard, NewScoreStructure):- %In case of pass
+	NewBoard = Board,
+	NewScoreStructure = ScoreStructure.
 moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure):- %No marker -> Increases score
 	\+nextTileHasMarker(Board, [X,Y], Direction),
 	getPlayer(Board, [X, Y], Player),
@@ -90,6 +94,16 @@ moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStruct
 	NewBoard = NewBoardTemp,
 	NewScoreStructure = ScoreStructure .
 
+displayDirectionsToMove(Board, [X, Y]):-
+	getRotatingDirections(Board, [X, Y], Directions),
+	write('Whats the next direction? '), nl,
+	displayDirectionsToMoveAux(Directions).
+	
+displayDirectionsToMoveAux([]):-
+	displayDirectionName(0), write(' - '), write(0).
+displayDirectionsToMoveAux([Direction | Rest]):-
+	displayDirectionName(Direction), write(' - '), write(Direction),nl,
+	displayDirectionsToMoveAux(Rest).
 % -----------------------------------------------
 % -----------------------------------------------
 
@@ -181,3 +195,8 @@ displayPiecesToChoose([Piece | Rest], Iterator):-
 	write(Iterator), write(' - '), write(Piece), nl,
 	IteratorPlus is Iterator + 1,
 	displayPiecesToChoose(Rest, IteratorPlus).
+
+%TODO Verificar quantas peças de um jogador podem ser movimentadas.
+%TODO Ciclo de jogo
+%TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
+%TODO Incluir a opcao "Passar o turno" na escolha das pecas
