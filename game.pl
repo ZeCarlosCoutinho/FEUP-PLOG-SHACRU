@@ -94,13 +94,23 @@ updatePlayerListAux(PiecesLength, [[PlayerNumber, _IsAbleToPlay] | Rest], NewPla
 	append(Rest, [[PlayerNumber, 0]], NewPlayerList).
 	
 
-checkEndGame(PlayerList, Winner):-
+checkEndGame(PlayerList, Winner, CountBlocked, CountBlockedPlus):-
+	checkEndGameAux(PlayerList, Winner, CountBlocked, CountBlockedPlus),
+	%todo
+checkEndGameAux(PlayerList, Winner, CountBlocked, CountBlockedPlus):- %Only one can move
 	list_to_set(PlayerList, PlayerSet),
 	selectchk([WinnerPlayer, 1], PlayerSet, Residue1),
 	\+selectchk([_, 1], Residue1, _Residue2),
-	Winner = WinnerPlayer.
-checkEndGame(_PlayerList, Winner):-
-	Winner = 0.
+	Winner = 0,
+	CountBlockedPlus is CountBlocked + 1.
+checkEndGameAux(PlayerList, Winner, CountBlocked, CountBlockedPlus):- %No one can move
+	list_to_set(PlayerList, PlayerSet),
+	\+selectchk([WinnerPlayer, 1], PlayerSet, Residue1),
+	Winner = 1,
+	CountBlockedPlus is CountBlocked + 1.
+checkEndGameAux(_PlayerList, Winner, CountBlocked, CountBlockedPlus):- %2 or more can move
+	Winner = 0,
+	CountBlockedPlus = 0.
 	
 % -----------------------------------------------
 % -----------------------------------------------
@@ -235,6 +245,7 @@ choosePiece(Board, Player, Piece):-
 	displayPiecesToChoose(Pieces),
 	read(PieceChosen),
 	PieceChosen > -1, PieceChosen < PiecesLength + 1,
+	%member(PieceChosen, Pieces), TODO
 	choosePieceAux(Pieces, PieceChosen, Piece).
 
 choosePieceAux(_, 0, Piece):-
@@ -248,8 +259,9 @@ choosePieceAux([_Piece | Rest], DecreasingIndex, PieceChosen):-
 		choosePieceAux(Rest, DecreasingIndexMinus, PieceChosen).
 
 displayPiecesToChoose(Pieces):- displayPiecesToChoose(Pieces, 1).
-displayPiecesToChoose([], _):-
+displayPiecesToChoose([], 1):-
 	write('0 - Pass'), nl .
+displayPiecesToChoose([], Iterator).
 displayPiecesToChoose([Piece | Rest], Iterator):-
 	write(Iterator), write(' - '), write(Piece), nl,
 	IteratorPlus is Iterator + 1,
