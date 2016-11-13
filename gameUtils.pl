@@ -332,7 +332,25 @@ pieceCanMove(Board, [X, Y]):-
 	getMovingDirections(Board, [X, Y], Directions),
 	!,
 	Directions \= []. %If it is empty, the piece cant move to any valid tile
-
-getPlayerMovingPieces(Board, Player, Pieces):-
-	getPlayerPieces(Board, Player, AllPieces, AllPiecesLength).
 	
+% -----------------------------------------------
+% -----------------------------------------------
+getPlayerMovingPieces(Board, Player, Pieces, PiecesLength):-
+	getPlayerPieces(Board, Player, AllPieces, AllPiecesLength),
+	getPlayerMovingPiecesAux(Board, AllPieces, Pieces, PiecesLength).
+	
+getPlayerMovingPiecesAux(Board, AllPieces, MovingPieces, MovingPiecesLength):-
+	getPlayerMovingPiecesAux(Board, AllPieces, [], MovingPieces, 0, MovingPiecesLength).
+	
+getPlayerMovingPiecesAux(Board, [], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-
+	MovingPieces = TempMovingPieces,
+	MovingPiecesLength = TempMovingPiecesLength.
+getPlayerMovingPiecesAux(Board, [Piece | Rest], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-
+	pieceCanMove(Board, Piece),
+	append(TempMovingPieces, [Piece], TempMovingPiecesPlus),
+	TempMovingPiecesLengthPlus is TempMovingPiecesLength + 1,
+	getPlayerMovingPiecesAux(Board, Rest, TempMovingPiecesPlus, MovingPieces, TempMovingPiecesLengthPlus, MovingPiecesLength).
+	
+getPlayerMovingPiecesAux(Board, [Piece | Rest], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-
+	\+pieceCanMove(Board, Piece),
+	getPlayerMovingPiecesAux(Board, Rest, TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength).

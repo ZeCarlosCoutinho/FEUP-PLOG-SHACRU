@@ -196,7 +196,6 @@ displayPiecesToChoose([Piece | Rest], Iterator):-
 	IteratorPlus is Iterator + 1,
 	displayPiecesToChoose(Rest, IteratorPlus).
 
-%TODO Verificar quantas peças de um jogador podem ser movimentadas.
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
 %TODO Incluir a opcao "Passar o turno" na escolha das pecas
