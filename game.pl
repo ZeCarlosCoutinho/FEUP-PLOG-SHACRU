@@ -160,3 +160,5 @@ createBoard(_, _, _, _).
 
 % -----------------------------------------------
 % -----------------------------------------------
+choosePiece(Board, Player, Piece):-
+	getPlayerPieces(Board, Player, Pieces).

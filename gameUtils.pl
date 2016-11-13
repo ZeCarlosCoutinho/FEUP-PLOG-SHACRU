@@ -300,24 +300,31 @@ nextTileHasMarker(Board, [X,Y], Direction):-
 	
 % -----------------------------------------------
 % -----------------------------------------------
-getPlayerPieces(Board, Player, Pieces):- %TODO Verification of NumPlayers
+getPlayerPieces(Board, Player, Pieces, PiecesLength):- %TODO Verification of NumPlayers
 	Player > 0, Player < 5,
-	getPlayerPieces(Board, Player, 1, [], Pieces).
-getPlayerPieces([], _, _, TempPieces, Pieces):-
-	Pieces = TempPieces.
-getPlayerPieces([Line | Rest], Player, ActualY, TempPieces, Pieces):-
-	getPlayerPiecesLine(Line, Player, [1, ActualY], TempPieces, TempPiecesPlus),
+	getPlayerPieces(Board, Player, 1, [], Pieces, 0, PiecesLength).
+getPlayerPieces([], _, _, TempPieces, Pieces, TempPiecesLength, PiecesLength):-
+	Pieces = TempPieces,
+	PiecesLength = TempPiecesLength.
+getPlayerPieces([Line | Rest], Player, ActualY, TempPieces, Pieces, TempPiecesLength, PiecesLength):-
+	getPlayerPiecesLine(Line, Player, [1, ActualY], [], Pieces1, 0, PiecesLength1),
 	ActualYPlus is ActualY + 1,
-	getPlayerPieces(Rest, Player, ActualYPlus, TempPiecesPlus, Pieces).
+	TempPiecesLengthPlus is PiecesLength1 + TempPiecesLength,
+	append(TempPieces, Pieces1, TempPiecesPlus),
+	getPlayerPieces(Rest, Player, ActualYPlus, TempPiecesPlus, Pieces, TempPiecesLengthPlus, PiecesLength).
 
-getPlayerPiecesLine([], _, _, TempPieces, Pieces):-
-	Pieces = TempPieces.
-getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, ActualY], TempPieces, Pieces):-
+getPlayerPiecesLine([], _, _, TempPieces, Pieces, TempPiecesLength, PiecesLength):-
+	Pieces = TempPieces,
+	PiecesLength = TempPiecesLength.
+getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, ActualY], TempPieces, Pieces, TempPiecesLength, PiecesLength):-
 	TilePlayer \= Player,
 	ActualXPlus is ActualX + 1,
-	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPieces, Pieces).
-getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, ActualY], TempPieces, Pieces):-
+	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPieces, Pieces, TempPiecesLength, PiecesLength).
+getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, ActualY], TempPieces, Pieces, TempPiecesLength, PiecesLength):-
 	TilePlayer =:= Player,
 	append(TempPieces, [[ActualX, ActualY]], TempPiecesPlus),
 	ActualXPlus is ActualX + 1,
-	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPiecesPlus, Pieces).
+	PiecesLengthPlus is TempPiecesLength + 1,
+	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPiecesPlus, Pieces, PiecesLengthPlus, PiecesLength).
+	
+% TODO Funcao que filtra o getPlayerPieces para ter so aquelas que se possam movimentar

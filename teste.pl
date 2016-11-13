@@ -251,5 +251,5 @@ showGetPlayerPieces(Player):-
 		[[3, 6],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[3, 4]],
 		[[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]],
 		[[0, 0],[0, 0],[1, 2],[0, 0],[3, 2],[0, 0],[2, 2],[0, 0],[0, 0]]],
-		getPlayerPieces(T, Player, Pieces),
-		write(Pieces).
+		getPlayerPieces(T, Player, Pieces, PiecesLength),
+		write(Pieces), nl, write(PiecesLength).
