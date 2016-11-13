@@ -179,6 +179,16 @@ getValidMoves(Board, Player, [X, Y], DirectionsList, Iterator, Result):- % Itera
 	validMove(Board, Player, [X, Y], Iterator),
 	append(DirectionsList, [Iterator], NewDirectionsList),
 	getValidMoves(Board, Player, [X, Y], NewDirectionsList, IteratorPlus, Result).
+
+	% Obtains the list of Directions that the piece can move in
+getMovingDirections(Board, [X, Y], Directions):-
+	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
+	TileDirection \= 0, %It must have a piece in the tile
+	getValidMoves(Board, TilePlayer, [X, Y], ValidMovesList), %Get all the valid tiles around the [X, Y] tile
+	getNearDirections(TileDirection, NearDirectionsList), %Get the near possible directions to move the piece
+	list_to_set(NearDirectionsList, NearDirectionsSet),
+	list_to_set(ValidMovesList, ValidMovesSet),
+	intersection(NearDirectionsSet, ValidMovesSet, Directions). %Get the near possible directions to move the piece that are valid
 	
 % -----------------------------------------------
 % -----------------------------------------------
@@ -242,16 +252,6 @@ movePiece(Board, [X, Y], Direction, NewBoard):-
 
 % -----------------------------------------------
 % -----------------------------------------------
-	
-	% Obtains the list of Directions that the piece can move in
-getMovingDirections(Board, [X, Y], Directions):-
-	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
-	TileDirection \= 0, %It must have a piece in the tile
-	getValidMoves(Board, TilePlayer, [X, Y], ValidMovesList), %Get all the valid tiles around the [X, Y] tile
-	getNearDirections(TileDirection, NearDirectionsList), %Get the near possible directions to move the piece
-	list_to_set(NearDirectionsList, NearDirectionsSet),
-	list_to_set(ValidMovesList, ValidMovesSet),
-	intersection(NearDirectionsSet, ValidMovesSet, Directions). %Get the near possible directions to move the piece that are valid
 
 rotatePiece(Board, [X, Y], 1, NewBoard):- % CounterClockWise
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
@@ -328,6 +328,11 @@ getPlayerPiecesLine([[TilePlayer, _TileDirection] | Rest], Player, [ActualX, Act
 	getPlayerPiecesLine(Rest, Player, [ActualXPlus, ActualY], TempPiecesPlus, Pieces, PiecesLengthPlus, PiecesLength).
 	
 % TODO Funcao que filtra o getPlayerPieces para ter so aquelas que se possam movimentar
+pieceCanMove(Board, [X, Y]):-
+	getMovingDirections(Board, [X, Y], Directions),
+	!,
+	Directions \= []. %If it is empty, the piece cant move to any valid tile
+
 getPlayerMovingPieces(Board, Player, Pieces):-
-	getPlayerPieces(Board, Player, AllPieces, AllPiecesLength),
+	getPlayerPieces(Board, Player, AllPieces, AllPiecesLength).
 	
