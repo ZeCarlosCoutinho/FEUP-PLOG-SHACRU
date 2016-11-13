@@ -71,7 +71,7 @@ increaseMarkScore([[ScorePlayer, ScoreNumber] | RemainingScores], TemporaryStruc
 % -----------------------------------------------
 
 moveAPiece(Board, ScoreStructure, [X, Y], NewBoard, NewScoreStructure):- %No marker -> Increases score
-	getTile(Board, [TilePlayer, TileDirection], [X, Y]),
+	getTile(Board, [_, TileDirection], [X, Y]),
 	TileDirection \= 0, %It must have a piece in the tile
 	write('Whats the next direction?: '),
 	read(Direction),
@@ -86,7 +86,6 @@ moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStruct
 	NewScoreStructure = NewScoreStructureTemp .
 moveAPieceAux(Board, ScoreStructure, [X, Y], Direction, NewBoard, NewScoreStructure):- %Already placed marker -> No increase in score
 	nextTileHasMarker(Board, [X,Y], Direction),
-	getPlayer(Board, [X, Y], Player), 
 	movePiece(Board, [X, Y], Direction, NewBoardTemp),
 	NewBoard = NewBoardTemp,
 	NewScoreStructure = ScoreStructure .
@@ -161,4 +160,24 @@ createBoard(_, _, _, _).
 % -----------------------------------------------
 % -----------------------------------------------
 choosePiece(Board, Player, Piece):-
-	getPlayerPieces(Board, Player, Pieces).
+	getPlayerPieces(Board, Player, Pieces, PiecesLength),
+	write('Which piece do you want to move? '), nl,
+	displayPiecesToChoose(Pieces),
+	read(PieceChosen),
+	PieceChosen > 0, PieceChosen < PiecesLength + 1,
+	choosePieceAux(Pieces, PieceChosen, Piece).
+
+choosePieceAux([], _, _):- write('choosePieceAux: wrong index'), fail.
+choosePieceAux([Piece | _Rest], 1, PieceChosen):-
+	PieceChosen = Piece.
+choosePieceAux([_Piece | Rest], DecreasingIndex, PieceChosen):-
+		DecreasingIndex \= 1,
+		DecreasingIndexMinus is DecreasingIndex - 1,
+		choosePieceAux(Rest, DecreasingIndexMinus, PieceChosen).
+
+displayPiecesToChoose(Pieces):- displayPiecesToChoose(Pieces, 1).
+displayPiecesToChoose([], _).
+displayPiecesToChoose([Piece | Rest], Iterator):-
+	write(Iterator), write(' - '), write(Piece), nl,
+	IteratorPlus is Iterator + 1,
+	displayPiecesToChoose(Rest, IteratorPlus).

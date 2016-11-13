@@ -257,21 +257,21 @@ rotatePiece(Board, [X, Y], 1, NewBoard):- % CounterClockWise
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
 	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
-	getNearDirections(TileDirection, [CounterClockWise, Same, ClockWise]),
+	getNearDirections(TileDirection, [CounterClockWise, _Same, _ClockWise]),
 	setDirection(Board, [X, Y], CounterClockWise, NewBoard).
 	
 rotatePiece(Board, [X, Y], 2, NewBoard):- % Same direction
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
 	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
-	getNearDirections(TileDirection, [CounterClockWise, Same, ClockWise]),
+	getNearDirections(TileDirection, [_CounterClockWise, Same, _ClockWise]),
 	setDirection(Board, [X, Y], Same, NewBoard).
 	
 rotatePiece(Board, [X, Y], 3, NewBoard):- % ClockWise
 	getTile(Board, [TilePlayer, TileDirection], [X, Y]),!, %get old Tile
 	TilePlayer \= 0, !,						%if it is 0, then there is no piece
 	TileDirection \= 0, TileDirection \= 5, !,%if it is 0 or 5, there is no piece
-	getNearDirections(TileDirection, [CounterClockWise, Same, ClockWise]),
+	getNearDirections(TileDirection, [_CounterClockWise, _Same, ClockWise]),
 	setDirection(Board, [X, Y], ClockWise, NewBoard).
 	
 rotatePiece(_, _, _, _):- fail .
