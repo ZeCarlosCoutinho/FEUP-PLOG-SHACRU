@@ -289,7 +289,15 @@ changedArea([PrevX, PrevY], [NewX, NewY]):-
 	(PrevY =:= 4, NewY =:= 3);
 	(PrevY =:= 6, NewY =:= 7);
 	(PrevY =:= 7, NewY =:= 6).
-
+	
+changedArea([PrevX, PrevY], Direction, HasChanged):-
+	directionToCoordinates(Direction, [PrevX, PrevY], [ResX, ResY]),
+	changedArea([PrevX, PrevY], [ResX, ResY]),
+	HasChanged = 1.
+changedArea([PrevX, PrevY], Direction, HasChanged):-
+	directionToCoordinates(Direction, [PrevX, PrevY], [ResX, ResY]),
+	\+changedArea([PrevX, PrevY], [ResX, ResY]),
+	HasChanged = 0.
 % -----------------------------------------------
 % -----------------------------------------------
 

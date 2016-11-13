@@ -104,6 +104,8 @@ displayDirectionsToMoveAux([]):-
 displayDirectionsToMoveAux([Direction | Rest]):-
 	displayDirectionName(Direction), write(' - '), write(Direction),nl,
 	displayDirectionsToMoveAux(Rest).
+	
+rotateAPiece.
 % -----------------------------------------------
 % -----------------------------------------------
 
@@ -198,9 +200,14 @@ displayPiecesToChoose([Piece | Rest], Iterator):-
 	write(Iterator), write(' - '), write(Piece), nl,
 	IteratorPlus is Iterator + 1,
 	displayPiecesToChoose(Rest, IteratorPlus).
+	
+% -----------------------------------------------
+% -----------------------------------------------
 
 turn(Board, Player, NewBoard):-
-	choosePiece(Board, Player).
+	choosePiece(Board, Player, PieceChosen),
+	moveAPiece(Board, ScoreStructure, PieceChosen, NewBoard, NewScoreStructure).
+	
 %TODO Ciclo de jogo
 %TODO Turno (Verificacao, Escolher Peca, Escolher Direcao, (Escolher Rotacao), Next)
 %TODO Incluir a opcao "Passar o turno" na escolha das pecas
