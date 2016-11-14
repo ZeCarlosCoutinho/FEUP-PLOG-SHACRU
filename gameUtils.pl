@@ -365,3 +365,8 @@ getPlayerMovingPiecesAux(Board, [Piece | Rest], TempMovingPieces, MovingPieces, 
 getPlayerMovingPiecesAux(Board, [Piece | Rest], TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength):-
 	\+pieceCanMove(Board, Piece),
 	getPlayerMovingPiecesAux(Board, Rest, TempMovingPieces, MovingPieces, TempMovingPiecesLength, MovingPiecesLength).
+	
+% -----------------------------------------------
+% -----------------------------------------------
+
+%getMostValuableMove(Board, Tile). %TODO So verificar a linha reta em frente

@@ -94,23 +94,18 @@ updatePlayerListAux(PiecesLength, [[PlayerNumber, _IsAbleToPlay] | Rest], NewPla
 	append(Rest, [[PlayerNumber, 0]], NewPlayerList).
 	
 
-checkEndGame(PlayerList, Winner, CountBlocked, CountBlockedPlus):-
-	checkEndGameAux(PlayerList, Winner, CountBlocked, CountBlockedPlus),
-	%todo
-checkEndGameAux(PlayerList, Winner, CountBlocked, CountBlockedPlus):- %Only one can move
+checkEndGameAux(PlayerList, Winner):- %Only one can move
 	list_to_set(PlayerList, PlayerSet),
-	selectchk([WinnerPlayer, 1], PlayerSet, Residue1),
+	selectchk([_WinnerPlayer, 1], PlayerSet, Residue1),
 	\+selectchk([_, 1], Residue1, _Residue2),
-	Winner = 0,
-	CountBlockedPlus is CountBlocked + 1.
-checkEndGameAux(PlayerList, Winner, CountBlocked, CountBlockedPlus):- %No one can move
+	%Winner = WinnerPlayer.
+	Winner = 0. %TODO Temporary! When tree searching is done, this must change
+checkEndGameAux(PlayerList, Winner):- %No one can move
 	list_to_set(PlayerList, PlayerSet),
-	\+selectchk([WinnerPlayer, 1], PlayerSet, Residue1),
-	Winner = 1,
-	CountBlockedPlus is CountBlocked + 1.
-checkEndGameAux(_PlayerList, Winner, CountBlocked, CountBlockedPlus):- %2 or more can move
-	Winner = 0,
-	CountBlockedPlus = 0.
+	\+selectchk([_WinnerPlayer, 1], PlayerSet, _Residue1),
+	Winner = 1.
+checkEndGameAux(_PlayerList, Winner):- %2 or more can move
+	Winner = 0.
 	
 % -----------------------------------------------
 % -----------------------------------------------
@@ -261,7 +256,7 @@ choosePieceAux([_Piece | Rest], DecreasingIndex, PieceChosen):-
 displayPiecesToChoose(Pieces):- displayPiecesToChoose(Pieces, 1).
 displayPiecesToChoose([], 1):-
 	write('0 - Pass'), nl .
-displayPiecesToChoose([], Iterator).
+displayPiecesToChoose([], _Iterator).
 displayPiecesToChoose([Piece | Rest], Iterator):-
 	write(Iterator), write(' - '), write(Piece), nl,
 	IteratorPlus is Iterator + 1,
@@ -288,9 +283,10 @@ gameCycle(Board, Scores, [[ActualPlayer, IsAbleToPlay] | RemainingPlayerList], W
 	write('gameCycle: updated player list'), nl,
 	checkEndGame(NewPlayerList, NewWinner),
 	gameCycle(NewBoard, NewScores, NewPlayerList, NewWinner, FinalWinner).
-gameCycle(_, Scores, _, Winner, FinalWinner):-
+gameCycle(Board, Scores, _, Winner, FinalWinner):-
 	Winner \= 0,
-	getWinner(Scores, FinalWinner).
+	getWinner(Scores, FinalWinner),
+	printBoard(Board).
 
 game :-
 	%TODO Presentation + Instructions
@@ -327,22 +323,22 @@ getWinner(Scores, Winner):-
 	getSecondPlace(Scores, SecondPlacePair),
 	getWinnerAux(WinningPair, SecondPlacePair, Winner).
 
-getWinnerAux([FirstPlace, Score1], [SecondPlace, Score2], Winner):-
+getWinnerAux([_FirstPlace, Score1], [_SecondPlace, Score2], Winner):-
 	Score1 = Score2,
 	Winner = 0.
-getWinnerAux([FirstPlace, Score1], [SecondPlace, Score2], Winner):-
+getWinnerAux([FirstPlace, Score1], [_SecondPlace, Score2], Winner):-
 	Score1 \= Score2,
 	Winner = FirstPlace.
 
 displayFinalWinner(0):-
 	write('#######################################################'), nl,
 	write('#########             IT´S A                  #########'), nl,
-	write('#########              DRAW 	                 #########'), nl,
+	write('#########              DRAW                   #########'), nl,
 	write('#######################################################'), nl .
 displayFinalWinner(FinalWinner):-
 	FinalWinner \= 0,
 	write('#######################################################'), nl,
 	write('#########             WINNER                  #########'), nl,
-	write('#########            PLAYER '), write(FinalWinner), write('	                 #########'), nl,
+	write('#########            PLAYER '), write(FinalWinner), write('                  #########'), nl,
 	write('#######################################################'), nl .
 	
